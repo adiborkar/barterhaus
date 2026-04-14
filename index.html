@@ -452,6 +452,10 @@
     }
     .who-row .r-desc {
       font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 300;
+      grid-column: 1 / -1;
+    }
+    @media (min-width: 812px) {
+      .who-row .r-desc { grid-column: auto; }
     }
     .who-row .r-trade {
       font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
