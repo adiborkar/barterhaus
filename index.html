@@ -19,7 +19,7 @@
       --blue:   #7AA0B2;
       --yellow: #FFE699;
       --red:    #D73234;
-      --muted:  #888078;
+      --muted:  #706C66;
       --rule:   #D4CCBF;
       --rust:   #C95528;
       --serif:  'Cormorant Garamond', Georgia, serif;
@@ -107,7 +107,9 @@
     .nav-logo em { display: block; font-style: normal; }
     .nav-hamburger {
       background: none; border: none; cursor: pointer;
-      display: flex; flex-direction: column; gap: 5px; padding: 4px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; padding: 4px;
+      min-width: 44px; min-height: 44px;
     }
     .nav-hamburger span {
       display: block; width: 26px; height: 1.5px;
@@ -230,10 +232,10 @@
     }
     .description-bracket p {
       font-family: var(--sans);
-      font-size: 0.9rem;
-      font-weight: 300;
+      font-size: 0.9375rem;
+      font-weight: 400;
       color: var(--ink);
-      line-height: 1.8;
+      line-height: 1.75;
       padding-top: 0.5rem;
     }
 
@@ -262,24 +264,26 @@
     .hero-form input[type="email"] {
       flex: 1;
       padding: 0.85rem 1rem;
+      min-height: 48px;
       border: 1.5px solid var(--ink); border-right: none;
       background: transparent;
-      font-family: var(--sans); font-size: 0.88rem;
+      font-family: var(--sans); font-size: 0.9375rem;
       color: var(--ink); outline: none;
     }
     .hero-form input::placeholder { color: var(--muted); }
     .hero-form button {
       padding: 0.85rem 1.3rem;
+      min-height: 48px;
       background: var(--ink); color: var(--bg);
       border: 1.5px solid var(--ink);
-      font-family: var(--sans); font-size: 0.75rem;
+      font-family: var(--sans); font-size: 0.8rem;
       font-weight: 500; letter-spacing: 0.08em;
       text-transform: uppercase; cursor: pointer;
       white-space: nowrap; transition: background 0.25s;
     }
     .hero-form button:hover { background: var(--rust); border-color: var(--rust); }
     .hero-note {
-      font-size: 0.75rem; color: var(--muted);
+      font-size: 0.8125rem; color: var(--muted);
       margin-top: 0.6rem; letter-spacing: 0.02em;
       position: relative; z-index: 1;
     }
@@ -352,7 +356,7 @@
       margin-bottom: 0.8rem;
     }
     .t-col.active h3 { font-style: italic; }
-    .t-col p { font-size: 0.88rem; line-height: 1.8; color: var(--muted); font-weight: 300; }
+    .t-col p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
     .t-verdict {
       margin-top: 1.5rem;
       font-family: var(--sans); font-size: 0.68rem;
@@ -390,7 +394,7 @@
       letter-spacing: -0.01em; line-height: 1.1;
       margin-bottom: 0.8rem;
     }
-    .how-step p { font-size: 0.88rem; line-height: 1.8; color: var(--muted); font-weight: 300; }
+    .how-step p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
     .step-bg-num {
       position: absolute; bottom: -1rem; right: -0.5rem;
       font-family: var(--serif); font-size: 9rem;
@@ -451,7 +455,7 @@
       font-size: 1.3rem; font-weight: 400; letter-spacing: -0.01em;
     }
     .who-row .r-desc {
-      font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 300;
+      font-size: 0.9375rem; color: var(--muted); line-height: 1.75; font-weight: 400;
       grid-column: 1 / -1;
     }
     @media (min-width: 812px) {
@@ -524,7 +528,7 @@
       font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
       color: var(--ink); margin-bottom: 0.4rem; letter-spacing: -0.01em;
     }
-    .credit-item p { font-size: 0.85rem; color: var(--muted); line-height: 1.8; font-weight: 300; }
+    .credit-item p { font-size: 0.9375rem; color: var(--muted); line-height: 1.75; font-weight: 400; }
 
     /* ─── PROMISE ─── */
     .promise { padding: 5rem 1.75rem; }
@@ -550,7 +554,7 @@
       font-family: var(--serif); font-size: 1.4rem; font-weight: 400;
       letter-spacing: -0.01em; margin-bottom: 0.4rem;
     }
-    .promise-item p { font-size: 0.85rem; line-height: 1.8; color: var(--muted); font-weight: 300; }
+    .promise-item p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
 
     /* ─── WAITLIST ─── */
     /* Keeping rust here as the one strong colour accent — chungiyoo uses pink circles similarly */
@@ -592,9 +596,10 @@
     }
     .waitlist-form input[type="email"] {
       flex: 1; padding: 1rem 1.1rem;
+      min-height: 52px;
       border: 1.5px solid var(--ink); border-right: none;
       background: var(--bg);
-      font-family: var(--sans); font-size: 0.88rem;
+      font-family: var(--sans); font-size: 0.9375rem;
       color: var(--ink); outline: none;
     }
     .waitlist-form input::placeholder { color: var(--muted); }
@@ -602,13 +607,14 @@
     .waitlist-form button {
       padding: 1rem 1.4rem; background: var(--ink); color: var(--bg);
       border: 1.5px solid var(--ink);
-      font-family: var(--sans); font-size: 0.75rem;
+      min-height: 52px;
+      font-family: var(--sans); font-size: 0.8rem;
       font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
       cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
     }
     .waitlist-form button:hover { opacity: 0.75; }
     .waitlist-note {
-      font-size: 0.75rem; color: var(--muted); margin-top: 0.8rem;
+      font-size: 0.8125rem; color: var(--muted); margin-top: 0.8rem;
       position: relative; z-index: 1;
     }
     .waitlist-success {
@@ -814,7 +820,7 @@
 
 <section class="credits">
   <h2 class="section-title">You don't have to<br><em>trade directly.</em></h2>
-  <p style="font-size:.88rem;color:var(--muted);max-width:460px;line-height:1.8;font-weight:300;">Classic barter fails because you need someone who wants exactly what you offer, right now. Haus credits break that deadlock. Help someone today — spend with someone else entirely, next month.</p>
+  <p style="font-size:.9375rem;color:var(--muted);max-width:520px;line-height:1.75;font-weight:400;">Classic barter fails because you need someone who wants exactly what you offer, right now. Haus credits break that deadlock. Help someone today — spend with someone else entirely, next month.</p>
   <div class="credits-body">
     <div class="circle-grid">
       <div class="cg-cell">
