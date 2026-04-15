@@ -472,16 +472,18 @@
     .credits { padding: 5rem 1.75rem; background: var(--bg3); }
     .credits-body {
       display: grid; grid-template-columns: 1fr;
-      gap: 4rem; margin-top: 4rem;
+      gap: 3rem; margin-top: 4rem;
     }
     @media (min-width: 992px) {
-      .credits-body { grid-template-columns: 1fr 1fr; align-items: start; }
+      .credits-body { grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: start; gap: 4rem; }
     }
     /* Physics & Microphysics circle grid */
     .circle-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       position: relative;
+      max-width: 380px;
     }
+    @media (min-width: 992px) { .circle-grid { max-width: 100%; } }
     .circle-grid::before {
       content: ''; position: absolute;
       left: 50%; top: 0; bottom: 0; width: 1px; background: var(--rule);
@@ -493,7 +495,7 @@
     .cg-cell {
       aspect-ratio: 1;
       display: flex; align-items: center; justify-content: center;
-      padding: 12%; position: relative;
+      padding: 10%; position: relative;
     }
     .cg-circle {
       width: 100%; height: 100%; border-radius: 50%;
@@ -516,7 +518,7 @@
     }
     .cg-arrow.r { right: -4px; top: 50%; transform: translateY(-50%); }
     .cg-arrow.d { bottom: -4px; left: 50%; transform: translateX(-50%); }
-    .credits-rules { display: flex; flex-direction: column; }
+    .credits-rules { display: flex; flex-direction: column; min-width: 0; overflow-wrap: break-word; }
     .credit-item { padding: 1.8rem 0; border-top: 1px solid var(--rule); }
     .credit-item:last-child { border-bottom: 1px solid var(--rule); }
     .credit-item .c-label {
