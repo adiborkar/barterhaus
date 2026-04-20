@@ -176,7 +176,7 @@
     }
     @media (min-width: 812px)  { .hero-header { min-height: 100vh; } }
     @media (min-width: 1200px) {
-      .hero-header { min-height: 95vw; padding-top: 16rem; padding-bottom: 26rem; }
+      .hero-header { min-height: 100vh; padding-top: 12rem; padding-bottom: 10rem; }
     }
 
     /* Giant background text — exact chungiyoo technique */
@@ -377,7 +377,7 @@
     .how-step {
       padding: 2.2rem 0;
       border-bottom: 1px solid var(--rule);
-      position: relative; overflow: hidden;
+      position: relative; overflow: clip;
     }
     @media (min-width: 812px) {
       .how-step {
@@ -397,7 +397,7 @@
     }
     .how-step p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
     .step-bg-num {
-      position: absolute; bottom: -1rem; right: -0.5rem;
+      position: absolute; bottom: -1rem; right: 0;
       font-family: var(--serif); font-size: 9rem;
       font-weight: 300; line-height: 1;
       color: var(--ink); opacity: 0.04; pointer-events: none;
@@ -572,7 +572,7 @@
       border-top: 1px solid var(--rule);
     }
     .waitlist-bg {
-      position: absolute; bottom: -3rem; right: -1rem;
+      position: absolute; bottom: -3rem; right: 0;
       font-family: var(--serif);
       font-size: clamp(10rem, 22vw, 22rem);
       font-weight: 300; line-height: 1;
