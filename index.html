@@ -188,8 +188,6 @@
       height: 100%;
       overflow-x: auto;
       overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
@@ -200,8 +198,6 @@
       width: 100vw;
       height: 100%;
       padding: calc(var(--slide-pad) + 3rem) var(--slide-pad) calc(var(--slide-pad) + 2.5rem);
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
       position: relative;
       display: flex; flex-direction: column;
       overflow: hidden;
@@ -461,25 +457,37 @@
     .slide-credits { justify-content: center; overflow-y: auto; }
     .cred-wrap {
       display: grid; grid-template-columns: 1fr;
-      gap: clamp(1.5rem, 3vw, 3rem);
-      align-items: center;
+      gap: clamp(1.2rem, 2.5vw, 2.5rem);
+      align-items: start;
     }
     @media (min-width: 900px) {
-      .cred-wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4rem; }
+      .cred-wrap {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: clamp(2rem, 4vw, 4rem);
+        align-items: center;
+      }
     }
-    .cred-head .title { font-size: clamp(2.4rem, 6vw, 5rem); max-width: 14ch; }
+    .cred-left { display: flex; flex-direction: column; gap: clamp(1rem, 2vw, 1.5rem); min-width: 0; }
+    .cred-head .title {
+      font-size: clamp(2rem, 5vw, 4rem);
+      max-width: 14ch;
+    }
     .cred-head .intro {
-      font-family: var(--serif); margin-top: 1.2rem;
-      font-size: clamp(0.95rem, 1.2vw, 1.2rem);
-      line-height: 1.5; max-width: 38ch;
+      font-family: var(--serif); margin-top: 0.8rem;
+      font-size: clamp(0.9rem, 1.05vw, 1.1rem);
+      line-height: 1.45; max-width: 40ch;
     }
     .cred-head .intro em { font-style: italic; color: var(--muted); }
 
     .node-wrap {
       position: relative;
-      width: 100%; max-width: 420px;
+      width: 100%;
+      max-width: min(360px, 38vh);
       aspect-ratio: 1.15;
-      margin: 0 auto;
+      margin: 0;
+    }
+    @media (max-width: 899px) {
+      .node-wrap { max-width: min(320px, 34vh); margin: 0 auto; }
     }
     .node {
       position: absolute;
@@ -814,40 +822,42 @@
   <!-- 10. CREDITS -->
   <section class="slide slide-credits" data-title="Credits" id="credits">
     <div class="eyebrow">Chapter 04. The credit system.</div>
-    <div class="cred-wrap" style="margin-top: 1.5rem;">
-      <div class="cred-head">
-        <h2 class="title">You don't have to<br><em>trade directly.</em></h2>
-        <p class="intro">Classic barter fails because you need someone who wants what you offer, right now. <em>Haus credits break that deadlock.</em> Help someone today. Spend with someone else next month.</p>
+    <div class="cred-wrap" style="margin-top: 1rem;">
+      <div class="cred-left">
+        <div class="cred-head">
+          <h2 class="title">You don't have to<br><em>trade directly.</em></h2>
+          <p class="intro">Classic barter fails because you need someone who wants what you offer, right now. <em>Haus credits break that deadlock.</em></p>
+        </div>
+        <div class="node-wrap" aria-hidden="true">
+          <svg class="node-svg" viewBox="0 0 400 340" preserveAspectRatio="none">
+            <path d="M110,70 C200,30 300,55 330,85"/>
+            <path d="M330,85 C360,170 320,245 300,265"/>
+            <path d="M300,265 C220,300 140,290 110,270"/>
+            <path d="M110,270 C50,200 60,115 110,70"/>
+            <path d="M110,70 L300,265"/>
+            <path d="M330,85 L110,270"/>
+          </svg>
+          <div class="node n1"><strong>Priya</strong><span>Piano</span></div>
+          <div class="node n2"><strong>Marcus</strong><span>Design</span></div>
+          <div class="node n3"><strong>Jia Li</strong><span>Photo</span></div>
+          <div class="node n4"><strong>Rafi</strong><span>Film</span></div>
+        </div>
       </div>
-      <div class="node-wrap" aria-hidden="true">
-        <svg class="node-svg" viewBox="0 0 400 340" preserveAspectRatio="none">
-          <path d="M110,70 C200,30 300,55 330,85"/>
-          <path d="M330,85 C360,170 320,245 300,265"/>
-          <path d="M300,265 C220,300 140,290 110,270"/>
-          <path d="M110,270 C50,200 60,115 110,70"/>
-          <path d="M110,70 L300,265"/>
-          <path d="M330,85 L110,270"/>
-        </svg>
-        <div class="node n1"><strong>Priya</strong><span>Piano</span></div>
-        <div class="node n2"><strong>Marcus</strong><span>Design</span></div>
-        <div class="node n3"><strong>Jia Li</strong><span>Photo</span></div>
-        <div class="node n4"><strong>Rafi</strong><span>Film</span></div>
-      </div>
-      <div class="cred-rules" style="grid-column: 1 / -1;">
+      <div class="cred-rules">
         <div class="cred-item">
           <div class="yr">Rule 01.</div>
           <h4>One credit. One meaningful service.</h4>
-          <p>An hour of teaching, a delivered logo, a photography session. You and the other person agree on what's fair. Community guidelines keep it honest.</p>
+          <p>An hour of teaching, a delivered logo, a photography session. Community guidelines keep it honest.</p>
         </div>
         <div class="cred-item">
           <div class="yr">Rule 02.</div>
           <h4>Credits never expire.</h4>
-          <p>No pressure to spend within a window. The Haus runs on goodwill and patience. Give when you can, receive when you need.</p>
+          <p>No pressure to spend within a window. Give when you can, receive when you need.</p>
         </div>
         <div class="cred-item">
           <div class="yr">Rule 03.</div>
           <h4>No cash out. Ever.</h4>
-          <p>Credits are community tokens. They exist only here. The moment we attach a cash value, it becomes work, and that's not what this is.</p>
+          <p>Credits are community tokens. Attach a cash value and it becomes work. That's not what this is.</p>
         </div>
       </div>
     </div>
@@ -861,7 +871,7 @@
   </section>
 
   <!-- 12. PROMISE 01 & 02 -->
-  <section class="slide slide-card" data-title="Promise 01–02">
+  <section class="slide slide-card" data-title="Promise 01/02">
     <div class="plate-wrap"><div class="plate" style="--rot:-1.5deg;">
       <div class="plate-inner">
         <div class="plate-stamp">Promise 01</div>
@@ -878,7 +888,7 @@
   </section>
 
   <!-- 13. PROMISE 03 & 04 -->
-  <section class="slide slide-card" data-title="Promise 03–04">
+  <section class="slide slide-card" data-title="Promise 03/04">
     <div class="plate-wrap"><div class="plate red" style="--rot:1.2deg;">
       <div class="plate-inner">
         <div class="plate-stamp">Promise 03</div>
@@ -895,7 +905,7 @@
   </section>
 
   <!-- 14. PROMISE 05 & 06 -->
-  <section class="slide slide-card" data-title="Promise 05–06">
+  <section class="slide slide-card" data-title="Promise 05/06">
     <div class="plate-wrap"><div class="plate cream" style="--rot:-1.2deg;">
       <div class="plate-inner">
         <div class="plate-stamp">Promise 05 &amp; 06</div>
@@ -959,13 +969,40 @@
   const total = slides.length;
   document.getElementById('total').textContent = String(total).padStart(2, '0');
 
-  // Vertical wheel ⇒ horizontal scroll
+  // Vertical wheel ⇒ horizontal scroll. Accumulate deltas and apply on rAF
+  // for a buttery, continuous feel.
+  let targetX = rail.scrollLeft;
+  let rafPending = false;
+  const EASE = 0.18;              // smoothing factor (0..1, higher = snappier)
+  const WHEEL_MULT = 1.15;        // wheel-to-scroll multiplier
+
+  function loopScroll() {
+    const dx = targetX - rail.scrollLeft;
+    if (Math.abs(dx) < 0.5) {
+      rail.scrollLeft = targetX;
+      rafPending = false;
+      return;
+    }
+    rail.scrollLeft += dx * EASE;
+    requestAnimationFrame(loopScroll);
+  }
+  function kick() {
+    if (!rafPending) { rafPending = true; requestAnimationFrame(loopScroll); }
+  }
+
   rail.addEventListener('wheel', (e) => {
-    // prefer existing horizontal intent on trackpads; otherwise translate Y to X
+    // Pass-through when the user is scrolling horizontally (trackpad swipe).
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     e.preventDefault();
-    rail.scrollLeft += e.deltaY;
+    const maxX = rail.scrollWidth - rail.clientWidth;
+    targetX = Math.max(0, Math.min(maxX, targetX + e.deltaY * WHEEL_MULT));
+    kick();
   }, { passive: false });
+
+  // Touch / trackpad two-finger updates targetX so our loop doesn't fight them.
+  rail.addEventListener('scroll', () => {
+    if (!rafPending) targetX = rail.scrollLeft;
+  }, { passive: true });
 
   // Track active slide for progress + counter
   const nowEl = document.getElementById('now');
