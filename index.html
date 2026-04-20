@@ -3,863 +3,1030 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Barterhaus — More than a hobby. Less than a job.</title>
+  <title>Barterhaus // Broadcast Signal 001 — More than a hobby. Less than a job.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;700&family=VT323&display=swap" rel="stylesheet" />
   <style>
+    /* ─────────────────────────────────────────────────────────────
+       BARTERHAUS · PAINTBOXED BROADCAST
+       A retro TV-graphics redesign — CRT scanlines, SMPTE bars,
+       airbrushed gradient orbs, chunky display + terminal type.
+       ───────────────────────────────────────────────────────────── */
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:     #F3EEE8;
-      --bg2:    #EDE8DF;
-      --bg3:    #E6DFD4;
-      --ink:    #000000;
-      --pink:   #F8C1CA;
-      --blue:   #7AA0B2;
-      --yellow: #FFE699;
-      --red:    #D73234;
-      --muted:  #706C66;
-      --rule:   #D4CCBF;
-      --rust:   #C95528;
-      --serif:  'Cormorant Garamond', Georgia, serif;
-      --sans:   'DM Sans', system-ui, sans-serif;
+      /* Paintbox broadcast palette */
+      --bg:      #0B0B12;
+      --bg2:     #121222;
+      --cream:   #F4EBD9;
+      --paper:   #EFE4CE;
+      --ink:     #0B0B12;
+      --magenta: #FF2E93;
+      --cyan:    #1CE6E6;
+      --yellow:  #FFD400;
+      --lime:    #C8FF00;
+      --orange:  #FF6B1A;
+      --violet:  #6B3FFF;
+      --muted:   #9A93B8;
+      --rule:    rgba(244,235,217,0.14);
+
+      --display: 'Bungee', 'Arial Black', sans-serif;
+      --serif:   'Instrument Serif', Georgia, serif;
+      --sans:    'Space Grotesk', system-ui, sans-serif;
+      --mono:    'VT323', 'Courier New', monospace;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      color: var(--ink);
+      color: var(--cream);
       font-family: var(--sans);
       font-size: 1rem;
-      line-height: 1.5;
+      line-height: 1.6;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── PRELOADER ─── */
-    .preloader {
+    /* CRT SCANLINE OVERLAY — global */
+    body::before {
+      content: '';
       position: fixed; inset: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.18) 3px,
+        rgba(0,0,0,0) 4px
+      );
+      pointer-events: none; z-index: 9998;
+      mix-blend-mode: multiply;
+    }
+    /* Subtle grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      pointer-events: none; z-index: 9997; opacity: 0.55;
+    }
+
+    ::selection { background: var(--magenta); color: var(--cream); }
+
+    /* ─── PRELOADER — SMPTE color bars + broadcast intro ─── */
+    .preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column;
       background: var(--bg);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       transition: opacity 0.7s ease, visibility 0.7s ease;
     }
     .preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .preloader .load-wrapper { display: flex; align-items: baseline; }
-    .preloader .load {
-      font-family: var(--serif);
-      font-weight: 300;
-      font-size: 3.5rem;
-      display: inline-block;
-      will-change: transform;
-      animation: wave 1.6s ease-in-out infinite;
+    .smpte {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
     }
-    .preloader .load-1  { animation-delay: 0.10s; }
-    .preloader .load-2  { animation-delay: 0.20s; }
-    .preloader .load-3  { animation-delay: 0.30s; }
-    .preloader .load-4  { animation-delay: 0.40s; }
-    .preloader .load-5  { animation-delay: 0.50s; }
-    .preloader .load-6  { animation-delay: 0.60s; }
-    .preloader .load-7  { animation-delay: 0.70s; }
-    .preloader .load-8  { animation-delay: 0.80s; }
-    .preloader .load-9  { animation-delay: 0.90s; }
-    .preloader-sub {
-      font-family: var(--sans);
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 2rem;
+    .smpte > div:nth-child(1) { background: #BFBFBF; }
+    .smpte > div:nth-child(2) { background: #BFBF00; }
+    .smpte > div:nth-child(3) { background: #00BFBF; }
+    .smpte > div:nth-child(4) { background: #00BF00; }
+    .smpte > div:nth-child(5) { background: #BF00BF; }
+    .smpte > div:nth-child(6) { background: #BF0000; }
+    .smpte > div:nth-child(7) { background: #0000BF; }
+    .preload-msg {
+      padding: 1.5rem 1.75rem;
+      font-family: var(--mono);
+      font-size: 1.3rem;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+      display: flex; align-items: center; gap: 1rem;
+      border-top: 2px solid var(--cream);
     }
-    @keyframes wave {
-      0%   { transform: translateY(0)    skew(0, 0); }
-      50%  { transform: translateY(-30%) skew(0, 5deg); }
-      100% { transform: translateY(0)    skew(0, 0); }
+    .preload-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--magenta);
+      animation: blink 0.6s steps(2) infinite;
+      box-shadow: 0 0 16px var(--magenta);
     }
+    @keyframes blink { 50% { opacity: 0.15; } }
 
     /* ─── NAV ─── */
     .navigation {
       position: fixed; top: 0; left: 0; width: 100%;
       z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.4rem 1.75rem;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem;
+      font-family: var(--mono); font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      color: var(--cream);
       transition: background 0.3s, border-color 0.3s;
+      mix-blend-mode: difference;
     }
     .navigation.scrolled {
-      background: rgba(243,238,232,0.92);
-      backdrop-filter: blur(10px);
+      background: rgba(11,11,18,0.85);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--rule);
+      mix-blend-mode: normal;
     }
     .nav-logo {
-      font-family: var(--serif);
-      font-weight: 400;
-      font-size: 1.15rem;
-      color: var(--ink);
-      text-decoration: none;
-      line-height: 1.15;
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: var(--display); font-size: 1rem;
+      color: var(--cream); text-decoration: none;
+      letter-spacing: 0.02em;
     }
-    .nav-logo em { display: block; font-style: normal; }
+    .nav-logo::before {
+      content: '▶'; color: var(--magenta); font-size: 0.8rem;
+      animation: blink 1s steps(2) infinite;
+    }
+    .nav-meta {
+      display: none;
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--cream); opacity: 0.8;
+    }
+    @media (min-width: 812px) { .nav-meta { display: flex; gap: 1.5rem; } }
+    .nav-meta span::before { content: '● '; color: var(--lime); }
     .nav-hamburger {
-      background: none; border: none; cursor: pointer;
+      background: var(--magenta); border: none; cursor: pointer;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 5px; padding: 4px;
-      min-width: 44px; min-height: 44px;
+      gap: 4px; padding: 0 0.9rem;
+      min-width: 48px; min-height: 40px;
+      font-family: var(--mono); color: var(--cream);
+      font-size: 1rem; letter-spacing: 0.1em;
+      border: 2px solid var(--cream);
+      box-shadow: 4px 4px 0 var(--cyan);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .nav-hamburger span {
-      display: block; width: 26px; height: 1.5px;
-      background: var(--ink); transition: 0.3s;
-    }
-    .nav-star {
-      font-size: 1.5rem;
-      color: var(--blue);
-      display: block;
-      animation: spin-slow 10s linear infinite;
-      user-select: none;
-    }
-    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    .nav-hamburger:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--cyan); }
 
     /* Nav overlay */
     .nav-overlay {
-      position: fixed; inset: 0;
-      background: var(--ink);
-      z-index: 200;
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--bg);
       display: flex; flex-direction: column;
       align-items: flex-start; justify-content: center;
-      padding: 0 2rem;
-      gap: 0;
+      padding: 2rem;
       opacity: 0; visibility: hidden;
-      transition: opacity 0.4s, visibility 0.4s;
+      transition: opacity 0.3s, visibility 0.3s;
     }
     .nav-overlay.open { opacity: 1; visibility: visible; }
-    .nav-overlay a {
-      font-family: var(--serif);
-      font-size: clamp(2.5rem, 8vw, 5.5rem);
-      font-weight: 300;
-      color: var(--bg);
-      text-decoration: none;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid #222;
-      width: 100%;
-      transition: color 0.2s, padding-left 0.2s;
+    .nav-overlay::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(255,46,147,0.25), transparent 55%),
+                  radial-gradient(ellipse at 80% 80%, rgba(28,230,230,0.22), transparent 55%);
+      pointer-events: none;
     }
-    .nav-overlay a:last-of-type { border-bottom: none; }
-    .nav-overlay a:hover { color: var(--pink); padding-left: 1rem; }
+    .nav-overlay a {
+      font-family: var(--display);
+      font-size: clamp(2rem, 7vw, 5rem);
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      padding: 0.3rem 0;
+      width: 100%;
+      position: relative; z-index: 1;
+      transition: color 0.18s, transform 0.18s;
+    }
+    .nav-overlay a:hover { color: var(--yellow); transform: translateX(1rem); }
     .nav-overlay-close {
-      position: absolute; top: 1.4rem; right: 1.75rem;
-      background: none; border: none;
-      color: var(--bg); font-size: 2rem; cursor: pointer;
-      font-family: var(--serif); font-weight: 300;
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: var(--magenta); border: 2px solid var(--cream);
+      color: var(--cream); width: 48px; height: 48px;
+      font-family: var(--display); font-size: 1.2rem;
+      cursor: pointer; z-index: 1;
     }
     .nav-overlay-meta {
       position: absolute; bottom: 2rem; left: 2rem;
-      font-family: var(--sans); font-size: 0.7rem;
-      letter-spacing: 0.12em; text-transform: uppercase; color: #888;
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--cream); opacity: 0.7; z-index: 1;
     }
+
+    /* ─── TICKER TAPE (top bar under nav, always scrolling) ─── */
+    .ticker {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: var(--cream); color: var(--bg);
+      font-family: var(--mono); font-size: 0.95rem;
+      padding: 0.35rem 0;
+      letter-spacing: 0.04em;
+      border-bottom: 2px solid var(--bg);
+      overflow: hidden;
+      z-index: 99;
+      transform: translateY(-100%);
+      transition: transform 0.4s;
+    }
+    .ticker.visible { transform: translateY(0); }
+    .ticker-inner {
+      display: flex; gap: 2rem; white-space: nowrap;
+      animation: scroll-l 40s linear infinite;
+    }
+    .ticker-inner span::before { content: '✦'; color: var(--magenta); margin-right: 0.5rem; }
+    @keyframes scroll-l { to { transform: translateX(-50%); } }
 
     /* ─── HERO ─── */
     .hero-header {
       position: relative;
-      min-height: 96vh;
-      padding-top: 10rem;
-      padding-bottom: 8rem;
-      padding-left: 1.75rem;
-      padding-right: 1.75rem;
+      min-height: 100vh;
+      padding: 8rem 1.5rem 6rem;
       overflow: hidden;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    @media (min-width: 812px)  { .hero-header { min-height: 100vh; } }
-    @media (min-width: 1200px) {
-      .hero-header { min-height: 100vh; padding-top: 12rem; padding-bottom: 10rem; }
+    /* Airbrushed gradient orbs — Paintbox signature */
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none;
+      mix-blend-mode: screen;
+      animation: drift 18s ease-in-out infinite;
+    }
+    .orb-1 { width: 55vw; height: 55vw; background: var(--magenta); top: -10vw; left: -15vw; opacity: 0.7; }
+    .orb-2 { width: 45vw; height: 45vw; background: var(--cyan); bottom: -15vw; right: -10vw; opacity: 0.55; animation-delay: -6s; }
+    .orb-3 { width: 35vw; height: 35vw; background: var(--violet); top: 30vh; right: 15vw; opacity: 0.45; animation-delay: -12s; }
+    @keyframes drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%     { transform: translate(4vw,-3vw) scale(1.08); }
+      66%     { transform: translate(-3vw,2vw) scale(0.95); }
     }
 
-    /* Giant background text — exact chungiyoo technique */
-    .large-text-wrapper {
-      position: absolute; left: 0; top: 42vw; z-index: 0;
-      pointer-events: none; white-space: nowrap;
+    /* Broadcast chrome strip above title */
+    .hero-chrome {
+      display: flex; align-items: center; gap: 1rem;
+      font-family: var(--mono); font-size: 1.05rem;
+      color: var(--cream); margin-bottom: 2.5rem;
+      position: relative; z-index: 2;
+      flex-wrap: wrap;
     }
-    @media (min-width: 812px)  { .large-text-wrapper { left: -4vw; top: 28vw; } }
-    @media (min-width: 992px)  { .large-text-wrapper { left: 0; top: 20vw; } }
-    .large-text {
-      font-family: var(--serif);
-      font-weight: 300;
-      font-size: 72vw;
-      line-height: 0.85;
-      color: var(--pink);
-      opacity: 0.28;
-      letter-spacing: -0.05em;
+    .hero-chrome .chip {
+      background: var(--cream); color: var(--bg);
+      padding: 0.15rem 0.6rem;
+      letter-spacing: 0.08em;
     }
-    @media (min-width: 812px)  { .large-text { font-size: 68vw; } }
-    @media (min-width: 992px)  { .large-text { font-size: 40.8vw; } }
+    .hero-chrome .chip.live { background: var(--magenta); color: var(--cream); animation: blink 1.3s steps(2) infinite; }
+    .hero-chrome .bar {
+      display: inline-flex; gap: 2px;
+    }
+    .hero-chrome .bar i {
+      display: block; width: 8px; height: 16px;
+    }
+    .hero-chrome .bar i:nth-child(1){ background: var(--magenta); }
+    .hero-chrome .bar i:nth-child(2){ background: var(--yellow); }
+    .hero-chrome .bar i:nth-child(3){ background: var(--cyan); }
+    .hero-chrome .bar i:nth-child(4){ background: var(--lime); }
 
-    /* Headline */
-    .headline-row {
-      display: block;
-      font-family: var(--serif);
-      font-size: clamp(3.5rem, 10vw, 9rem);
-      font-weight: 400;
-      line-height: 1.0;
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(3.2rem, 13vw, 11rem);
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      color: var(--cream);
+      position: relative; z-index: 2;
+      text-transform: uppercase;
+    }
+    .hero-title .line { display: block; }
+    .hero-title .line.italic {
+      font-family: var(--serif); font-style: italic;
+      font-weight: 400; text-transform: none;
+      color: var(--yellow);
+      font-size: 1.1em; line-height: 0.9;
       letter-spacing: -0.02em;
-      margin-top: -0.25em;
-      position: relative; z-index: 1;
+      margin-top: 0.1em;
     }
-    .headline-row:first-of-type { margin-top: 0; }
-    .headline-row em { font-style: italic; font-weight: 300; color: var(--rust); }
+    .hero-title .line.outline {
+      -webkit-text-stroke: 2px var(--cream);
+      color: transparent;
+    }
+    .hero-title .split-color {
+      background: linear-gradient(90deg, var(--magenta) 0%, var(--magenta) 50%, var(--cyan) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-    /* Description in parentheses — chungiyoo's signature technique */
-    .description-bracket {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin: 4rem 0 4rem 0;
-      max-width: 400px;
-      position: relative; z-index: 1;
+    .hero-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      max-width: 1200px;
+      position: relative; z-index: 2;
     }
-    @media (min-width: 812px) { .description-bracket { margin-left: 3vw; } }
-    .bracket {
+    @media (min-width: 812px) {
+      .hero-body { grid-template-columns: 1fr 1fr; align-items: end; }
+    }
+    .hero-lede {
       font-family: var(--serif);
-      font-size: 2.5rem;
-      font-weight: 300;
-      color: var(--muted);
-      line-height: 1.5;
-      flex-shrink: 0;
+      font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+      font-style: italic;
+      line-height: 1.35;
+      color: var(--cream);
+      max-width: 30ch;
     }
-    .description-bracket p {
-      font-family: var(--sans);
-      font-size: 0.9375rem;
-      font-weight: 400;
-      color: var(--ink);
-      line-height: 1.75;
-      padding-top: 0.5rem;
+    .hero-lede em { color: var(--yellow); font-style: italic; }
+    .hero-lede::before {
+      content: '「'; color: var(--magenta);
+      font-size: 1.4em; display: block; margin-bottom: -0.3em;
     }
 
-    /* Circular rotating badge */
-    .circle-badge {
-      position: absolute; top: 28vw; right: 4vw;
-      width: clamp(80px, 9vw, 120px);
-      height: clamp(80px, 9vw, 120px);
-      z-index: 1;
-    }
-    @media (min-width: 992px) { .circle-badge { top: 20vw; } }
-    .circle-badge svg { width: 100%; height: 100%; animation: spin-slow 14s linear infinite; }
-    .circle-badge-inner {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; color: var(--ink);
-    }
-
-    /* Hero email form */
+    /* Hero CTA */
     .hero-form {
       display: flex; gap: 0;
-      max-width: 400px;
-      margin-top: 3rem;
-      position: relative; z-index: 1;
+      max-width: 460px;
+      font-family: var(--mono);
     }
     .hero-form input[type="email"] {
       flex: 1;
-      padding: 0.85rem 1rem;
-      min-height: 48px;
-      border: 1.5px solid var(--ink); border-right: none;
+      padding: 0.95rem 1rem;
+      min-height: 52px;
+      border: 2px solid var(--cream);
       background: transparent;
-      font-family: var(--sans); font-size: 0.9375rem;
-      color: var(--ink); outline: none;
+      font-family: var(--mono); font-size: 1.1rem;
+      color: var(--cream); outline: none;
+      letter-spacing: 0.02em;
     }
-    .hero-form input::placeholder { color: var(--muted); }
+    .hero-form input::placeholder { color: rgba(244,235,217,0.5); }
+    .hero-form input:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(255,212,0,0.25); }
     .hero-form button {
-      padding: 0.85rem 1.3rem;
-      min-height: 48px;
-      background: var(--ink); color: var(--bg);
-      border: 1.5px solid var(--ink);
-      font-family: var(--sans); font-size: 0.8rem;
-      font-weight: 500; letter-spacing: 0.08em;
-      text-transform: uppercase; cursor: pointer;
-      white-space: nowrap; transition: background 0.25s;
+      padding: 0.95rem 1.4rem;
+      min-height: 52px;
+      background: var(--magenta); color: var(--cream);
+      border: 2px solid var(--cream); border-left: none;
+      font-family: var(--display); font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
     }
-    .hero-form button:hover { background: var(--rust); border-color: var(--rust); }
+    .hero-form button:hover { background: var(--yellow); color: var(--bg); }
     .hero-note {
-      font-size: 0.8125rem; color: var(--muted);
-      margin-top: 0.6rem; letter-spacing: 0.02em;
-      position: relative; z-index: 1;
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--cream); opacity: 0.7;
+      margin-top: 0.8rem;
     }
     .success-msg {
-      display: none; align-items: center; gap: 0.4rem;
-      font-family: var(--serif); font-size: 1.2rem;
-      font-weight: 300; color: var(--ink);
-      margin-top: 0.5rem; position: relative; z-index: 1;
+      display: none; align-items: center; gap: 0.5rem;
+      font-family: var(--display); font-size: 1rem;
+      color: var(--yellow);
+      margin-top: 0.5rem;
     }
 
-    /* ─── SECTION CHROME ─── */
-    .s-rule { border: none; border-top: 1px solid var(--rule); margin: 0 1.75rem; }
-    .s-meta {
-      display: flex; align-items: center; gap: 0.8rem;
-      padding: 0.9rem 1.75rem;
-      border-bottom: 1px solid var(--rule);
-      font-family: var(--sans); font-size: 0.72rem;
-      font-weight: 500; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--muted);
-    }
-    .s-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 1.5em; height: 1.5em;
-      border: 1px solid var(--red); border-radius: 50%;
-      color: var(--red); font-size: 0.62rem; flex-shrink: 0;
-    }
-
-    /* ─── TENSION ─── */
-    .tension { padding: 5rem 1.75rem; }
-    .section-title {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem, 5.5vw, 4.5rem);
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      line-height: 1.05;
-      margin-bottom: 3.5rem;
-    }
-    .section-title em { font-style: italic; font-weight: 300; color: var(--rust); }
-    .t-cols {
-      display: grid;
-      grid-template-columns: 1fr;
+    /* ─── SECTION HEADERS (CH.XX labels) ─── */
+    .ch-head {
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      font-family: var(--mono); font-size: 1.05rem;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+      background: var(--bg2);
       border-top: 1px solid var(--rule);
-    }
-    @media (min-width: 812px) {
-      .t-cols { grid-template-columns: 1fr 1fr 1fr; border-top: none; }
-    }
-    .t-col {
-      padding: 2.2rem 0;
       border-bottom: 1px solid var(--rule);
+      flex-wrap: wrap;
     }
-    @media (min-width: 812px) {
-      .t-col {
-        padding: 2.2rem 2rem;
-        border-bottom: none;
-        border-right: 1px solid var(--rule);
-      }
-      .t-col:first-child { padding-left: 0; }
-      .t-col:last-child  { border-right: none; }
+    .ch-head .ch-num {
+      background: var(--lime); color: var(--bg);
+      font-family: var(--display); font-size: 0.85rem;
+      padding: 0.2rem 0.6rem;
     }
-    .t-col .c-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 1.5em; height: 1.5em;
-      border: 1px solid var(--red); border-radius: 50%;
-      font-size: 0.62rem; color: var(--red); margin-bottom: 1.2rem;
+    .ch-head .ch-title { flex: 1; min-width: 200px; }
+    .ch-head .ch-time { opacity: 0.6; }
+
+    /* ─── SECTION TITLES ─── */
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(2.4rem, 7vw, 5.5rem);
+      line-height: 0.98;
+      letter-spacing: -0.005em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      color: var(--cream);
+    }
+    .section-title em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      text-transform: none;
+      font-size: 1.15em; line-height: 0.9;
+      letter-spacing: -0.02em;
+      display: inline-block;
+    }
+    .section-title .pink  { color: var(--magenta); }
+    .section-title .cyan  { color: var(--cyan); }
+    .section-title .yellow{ color: var(--yellow); }
+    .section-title .lime  { color: var(--lime); }
+
+    /* ─── TENSION SECTION ─── */
+    .tension { padding: 5rem 1.5rem; position: relative; }
+    .t-cols {
+      display: grid; grid-template-columns: 1fr;
+      gap: 0;
+    }
+    @media (min-width: 812px) { .t-cols { grid-template-columns: repeat(3,1fr); } }
+    .t-col {
+      padding: 2rem;
+      border: 1px solid var(--rule);
+      margin: -1px 0 0 -1px;
+      background: var(--bg);
+      position: relative;
+      transition: background 0.25s, color 0.25s;
+    }
+    .t-col .tv {
+      display: inline-block;
+      font-family: var(--mono); font-size: 1rem;
+      padding: 0.1rem 0.5rem;
+      margin-bottom: 1.2rem;
+      background: var(--bg2);
+      color: var(--cream);
+      letter-spacing: 0.08em;
     }
     .t-col h3 {
-      font-family: var(--serif);
-      font-size: 1.7rem; font-weight: 400;
-      letter-spacing: -0.01em; line-height: 1.1;
+      font-family: var(--display);
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: -0.005em;
       margin-bottom: 0.8rem;
+      line-height: 1.1;
     }
-    .t-col.active h3 { font-style: italic; }
-    .t-col p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
-    .t-verdict {
-      margin-top: 1.5rem;
-      font-family: var(--sans);
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    .t-col p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--muted);
     }
-    .t-col p.t-verdict { font-size: 0.72rem; line-height: 1.5; font-weight: 500; }
-    .t-col.active .t-verdict { color: var(--rust); }
+    .t-col .verdict {
+      display: inline-block; margin-top: 1.2rem;
+      font-family: var(--mono); font-size: 1rem;
+      letter-spacing: 0.04em; color: var(--orange);
+    }
+    .t-col.active {
+      background: var(--magenta); color: var(--cream);
+    }
+    .t-col.active .tv { background: var(--cream); color: var(--bg); }
+    .t-col.active h3, .t-col.active p { color: var(--cream); }
+    .t-col.active .verdict { color: var(--yellow); }
 
     /* ─── HOW IT WORKS ─── */
-    .how { padding: 5rem 1.75rem; background: var(--bg2); }
+    .how { padding: 5rem 1.5rem; background: var(--paper); color: var(--bg); position: relative; overflow: hidden; }
+    .how .section-title { color: var(--bg); }
+    .how .section-title em { color: var(--magenta); }
+    .how::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--bg) 1px, transparent 1px),
+        linear-gradient(90deg, var(--bg) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.06; pointer-events: none;
+    }
     .how-steps {
       display: grid; grid-template-columns: 1fr;
-      border-top: 1px solid var(--rule);
+      gap: 1.5rem;
+      position: relative; z-index: 1;
     }
-    @media (min-width: 812px) {
-      .how-steps { grid-template-columns: repeat(3, 1fr); border-top: none; }
-    }
+    @media (min-width: 812px) { .how-steps { grid-template-columns: repeat(3,1fr); gap: 1.5rem; } }
     .how-step {
-      padding: 2.2rem 0;
-      border-bottom: 1px solid var(--rule);
-      position: relative; overflow: clip;
+      background: var(--bg); color: var(--cream);
+      padding: 2rem;
+      position: relative;
+      box-shadow: 8px 8px 0 var(--bg);
+      transform: rotate(-0.6deg);
+      transition: transform 0.25s, box-shadow 0.25s;
+      overflow: hidden;
     }
-    @media (min-width: 812px) {
-      .how-step {
-        padding: 2.2rem 2rem;
-        border-bottom: none;
-        border-right: 1px solid var(--rule);
-      }
-      .how-step:first-child { padding-left: 0; }
-      .how-step:last-child  { border-right: none; }
+    .how-step:nth-child(2) { transform: rotate(0.4deg); box-shadow: 8px 8px 0 var(--magenta); }
+    .how-step:nth-child(3) { transform: rotate(-0.3deg); box-shadow: 8px 8px 0 var(--cyan); }
+    .how-step:hover { transform: rotate(0) translate(-4px,-4px); }
+    .how-step .badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--yellow); color: var(--bg);
+      font-family: var(--display); font-size: 0.85rem;
+      padding: 0.25rem 0.6rem;
+      margin-bottom: 1rem;
+      letter-spacing: 0.04em;
     }
-    .how-step .s-num { margin-bottom: 1.3rem; }
     .how-step h3 {
-      font-family: var(--serif);
-      font-size: 1.7rem; font-weight: 400;
-      letter-spacing: -0.01em; line-height: 1.1;
+      font-family: var(--display);
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      line-height: 1.1;
       margin-bottom: 0.8rem;
     }
-    .how-step p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
+    .how-step p { font-family: var(--sans); font-size: 0.95rem; line-height: 1.7; color: var(--muted); }
     .step-bg-num {
-      position: absolute; bottom: -1rem; right: 0;
-      font-family: var(--serif); font-size: 9rem;
-      font-weight: 300; line-height: 1;
-      color: var(--ink); opacity: 0.04; pointer-events: none;
+      position: absolute; bottom: -2rem; right: -0.5rem;
+      font-family: var(--display); font-size: 10rem;
+      line-height: 1;
+      color: var(--cream); opacity: 0.06;
+      pointer-events: none;
     }
 
-    /* ─── YELLOW MARQUEE ─── */
+    /* ─── MARQUEE (rainbow bars) ─── */
     .marquee-strip {
-      background: var(--yellow);
-      padding: 0.9rem 0; overflow: hidden;
-      border-top: 1px solid #E8D880;
-      border-bottom: 1px solid #E8D880;
+      background: var(--bg2);
+      padding: 0; overflow: hidden;
+      border-top: 2px solid var(--cream);
+      border-bottom: 2px solid var(--cream);
     }
+    .marquee-bars {
+      display: grid;
+      grid-template-columns: repeat(7,1fr);
+      height: 8px;
+    }
+    .marquee-bars i:nth-child(1){background:var(--magenta);}
+    .marquee-bars i:nth-child(2){background:var(--orange);}
+    .marquee-bars i:nth-child(3){background:var(--yellow);}
+    .marquee-bars i:nth-child(4){background:var(--lime);}
+    .marquee-bars i:nth-child(5){background:var(--cyan);}
+    .marquee-bars i:nth-child(6){background:var(--violet);}
+    .marquee-bars i:nth-child(7){background:var(--cream);}
     .marquee-inner {
-      display: flex; gap: 2.5rem; white-space: nowrap;
-      animation: marquee-scroll 22s linear infinite;
+      display: flex; gap: 3rem; white-space: nowrap;
+      padding: 1rem 0;
+      animation: scroll-l 28s linear infinite;
+      font-family: var(--display);
+      font-size: 1.1rem;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
-    .marquee-item {
-      font-family: var(--sans); font-size: 0.72rem;
-      font-weight: 500; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--ink);
-      flex-shrink: 0;
-    }
-    .marquee-item span { color: var(--red); }
-    @keyframes marquee-scroll {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
+    .marquee-inner .sep { color: var(--magenta); }
+    .marquee-inner .alt { color: var(--cyan); }
+    .marquee-inner .alt2 { color: var(--yellow); }
 
-    /* ─── WHO IT'S FOR ─── */
-    .who { padding: 5rem 1.75rem; }
+    /* ─── WHO ─── */
+    .who { padding: 5rem 1.5rem; }
     .who-row {
       display: grid;
-      grid-template-columns: 1.8rem 1fr;
-      gap: 0.8rem 1.5rem;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem 1rem;
       align-items: baseline;
       padding: 1.6rem 0;
       border-top: 1px solid var(--rule);
-      transition: padding-left 0.2s;
+      transition: padding-left 0.25s, background 0.25s;
+      cursor: default;
     }
     @media (min-width: 812px) {
-      .who-row {
-        grid-template-columns: 1.8rem 14rem 1fr auto;
-        gap: 0 2rem;
-      }
-      .who-row:hover { padding-left: 1rem; }
+      .who-row { grid-template-columns: 4rem 16rem 1fr auto; gap: 0 2rem; align-items: center; }
+      .who-row:hover { padding-left: 1rem; background: linear-gradient(90deg, rgba(255,46,147,0.06), transparent); }
     }
     .who-row:last-child { border-bottom: 1px solid var(--rule); }
     .who-row .r-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 1.5em; height: 1.5em;
-      border: 1px solid var(--red); border-radius: 50%;
-      font-size: 0.6rem; color: var(--red);
+      font-family: var(--mono); font-size: 1.1rem;
+      color: var(--lime);
+      letter-spacing: 0.04em;
     }
     .who-row .r-type {
-      font-family: var(--serif);
-      font-size: 1.3rem; font-weight: 400; letter-spacing: -0.01em;
+      font-family: var(--display);
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.005em;
+      color: var(--cream);
     }
     .who-row .r-desc {
-      font-size: 0.9375rem; color: var(--muted); line-height: 1.75; font-weight: 400;
+      font-size: 0.95rem; color: var(--muted); line-height: 1.7;
       grid-column: 1 / -1;
     }
-    @media (min-width: 812px) {
-      .who-row .r-desc { grid-column: auto; }
-    }
+    @media (min-width: 812px) { .who-row .r-desc { grid-column: auto; } }
     .who-row .r-trade {
-      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
-      letter-spacing: 0.05em; color: var(--rust);
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--magenta);
       white-space: nowrap; display: none;
     }
     @media (min-width: 812px) { .who-row .r-trade { display: block; } }
 
     /* ─── CREDITS ─── */
-    .credits { padding: 5rem 1.75rem; background: var(--bg3); }
+    .credits { padding: 5rem 1.5rem; background: var(--bg2); position: relative; overflow: hidden; }
+    .credits::before {
+      content: ''; position: absolute; top: -20vw; right: -20vw;
+      width: 50vw; height: 50vw; border-radius: 50%;
+      background: radial-gradient(circle, var(--violet), transparent 70%);
+      opacity: 0.5; filter: blur(60px); pointer-events: none;
+    }
     .credits-intro {
-      font-size: 0.9375rem; color: var(--muted);
-      max-width: 520px; line-height: 1.75; font-weight: 400;
-      margin-top: 1rem;
+      font-family: var(--serif); font-style: italic;
+      font-size: 1.25rem; color: var(--cream);
+      max-width: 560px; line-height: 1.45;
+      margin-top: -1rem; margin-bottom: 3rem;
     }
     .credits-body {
-      display: grid; grid-template-columns: 1fr;
-      gap: 3rem; margin-top: 4rem;
+      display: grid; grid-template-columns: 1fr; gap: 3rem;
+      position: relative; z-index: 1;
     }
     @media (min-width: 992px) {
-      .credits-body { grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: start; gap: 4rem; }
+      .credits-body { grid-template-columns: minmax(0,1fr) minmax(0,1.2fr); gap: 4rem; align-items: start; }
     }
-    /* Physics & Microphysics circle grid */
-    .circle-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
+    .node-diagram {
       position: relative;
-      max-width: 340px;
+      padding: 2rem 1rem;
+      max-width: 420px;
+      margin: 0 auto;
     }
-    .circle-grid::before {
-      content: ''; position: absolute;
-      left: 50%; top: 0; bottom: 0; width: 1px; background: var(--rule);
+    .node {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 130px; height: 130px; border-radius: 50%;
+      font-family: var(--display); text-align: center;
+      padding: 1rem; line-height: 1.1;
+      position: absolute;
+      border: 2px solid var(--cream);
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
     }
-    .circle-grid::after {
-      content: ''; position: absolute;
-      top: 50%; left: 0; right: 0; height: 1px; background: var(--rule);
+    .node strong { font-size: 0.9rem; color: var(--bg); display: block; }
+    .node span { font-family: var(--mono); font-size: 0.95rem; color: var(--bg); opacity: 0.75; margin-top: 0.2rem; }
+    .node.n1 { background: var(--magenta); top: 0; left: 10%; }
+    .node.n2 { background: var(--yellow); top: 0; right: 10%; }
+    .node.n3 { background: var(--cyan); bottom: 0; left: 10%; }
+    .node.n4 { background: var(--lime); bottom: 0; right: 10%; }
+    .node-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none;
     }
-    .cg-cell {
-      aspect-ratio: 1;
-      display: flex; align-items: center; justify-content: center;
-      padding: 10%; position: relative;
+    .node-svg path {
+      stroke: var(--cream); stroke-width: 2; fill: none;
+      stroke-dasharray: 6 6;
+      animation: dash 30s linear infinite;
     }
-    .cg-circle {
-      width: 100%; height: 100%; border-radius: 50%;
-      background: var(--bg);
-      border: 1.5px solid var(--rule);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 16px;
+    @keyframes dash { to { stroke-dashoffset: -400; } }
+    .node-diagram-wrap {
+      position: relative;
+      width: 100%; max-width: 420px;
+      aspect-ratio: 1.2;
+      margin: 0 auto;
     }
-    .cg-circle.accent {
-      background: var(--pink); border-color: var(--pink);
-    }
-    .cg-circle strong {
-      font-family: var(--serif);
-      font-size: 1rem; font-weight: 400; color: var(--ink);
-    }
-    .cg-circle span { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.04em; }
-    .cg-arrow {
-      position: absolute; font-size: 1rem; color: var(--red); z-index: 2;
-    }
-    .cg-arrow.r { right: -4px; top: 50%; transform: translateY(-50%); }
-    .cg-arrow.d { bottom: -4px; left: 50%; transform: translateX(-50%); }
-    .credits-rules { display: flex; flex-direction: column; min-width: 0; overflow-wrap: break-word; }
+    .credits-rules { display: flex; flex-direction: column; min-width: 0; }
     .credit-item { padding: 1.8rem 0; border-top: 1px solid var(--rule); }
     .credit-item:last-child { border-bottom: 1px solid var(--rule); }
     .credit-item .c-label {
-      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--red); margin-bottom: 0.4rem;
+      font-family: var(--mono); font-size: 1rem;
+      letter-spacing: 0.08em; color: var(--yellow);
+      margin-bottom: 0.3rem;
     }
     .credit-item h4 {
-      font-family: var(--serif); font-size: 1.3rem; font-weight: 400;
-      color: var(--ink); margin-bottom: 0.4rem; letter-spacing: -0.01em;
+      font-family: var(--display); font-size: 1.2rem;
+      text-transform: uppercase; color: var(--cream);
+      margin-bottom: 0.5rem; line-height: 1.15;
     }
-    .credit-item p { font-size: 0.9375rem; color: var(--muted); line-height: 1.75; font-weight: 400; }
+    .credit-item p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
 
     /* ─── PROMISE ─── */
-    .promise { padding: 5rem 1.75rem; }
-    .promise-grid { display: grid; grid-template-columns: 1fr; }
+    .promise { padding: 5rem 1.5rem; }
+    .promise-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
     @media (min-width: 812px) { .promise-grid { grid-template-columns: 1fr 1fr; } }
-    .promise-item { padding: 2rem 0; border-top: 1px solid var(--rule); }
-    @media (min-width: 812px) {
-      .promise-item {
-        padding: 2rem 2rem;
-        border-top: 1px solid var(--rule);
-        border-left: 1px solid var(--rule);
-      }
-      .promise-item:nth-child(odd) { border-left: none; padding-left: 0; }
-      .promise-item:nth-child(1),
-      .promise-item:nth-child(2) { border-top: none; }
+    .promise-item {
+      padding: 2rem;
+      border: 1px solid var(--rule);
+      margin: -1px 0 0 -1px;
+      position: relative;
+      transition: background 0.2s;
     }
+    .promise-item:hover { background: rgba(255,212,0,0.05); }
     .promise-item .p-label {
-      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--red); margin-bottom: 0.4rem;
+      font-family: var(--mono); font-size: 1rem;
+      letter-spacing: 0.08em; color: var(--magenta);
+      margin-bottom: 0.4rem;
     }
     .promise-item h3 {
-      font-family: var(--serif); font-size: 1.4rem; font-weight: 400;
-      letter-spacing: -0.01em; margin-bottom: 0.4rem;
+      font-family: var(--display); font-size: 1.2rem;
+      text-transform: uppercase; line-height: 1.1;
+      margin-bottom: 0.5rem; color: var(--cream);
     }
-    .promise-item p { font-size: 0.9375rem; line-height: 1.75; color: var(--muted); font-weight: 400; }
+    .promise-item p { font-size: 0.95rem; line-height: 1.7; color: var(--muted); }
 
     /* ─── WAITLIST ─── */
-    /* Keeping rust here as the one strong colour accent — chungiyoo uses pink circles similarly */
     .waitlist {
-      background: var(--bg2);
-      padding: 5rem 1.75rem;
-      position: relative; overflow: hidden;
-      border-top: 1px solid var(--rule);
+      padding: 6rem 1.5rem; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--magenta) 0%, var(--violet) 60%, var(--cyan) 120%);
+      color: var(--cream);
+      border-top: 2px solid var(--cream);
+      border-bottom: 2px solid var(--cream);
     }
-    .waitlist-bg {
-      position: absolute; bottom: -3rem; right: 0;
-      font-family: var(--serif);
-      font-size: clamp(10rem, 22vw, 22rem);
-      font-weight: 300; line-height: 1;
-      color: var(--pink); opacity: 0.28;
-      pointer-events: none; letter-spacing: -0.05em;
+    .waitlist::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0,
+        rgba(0,0,0,0) 3px,
+        rgba(0,0,0,0.15) 4px,
+        rgba(0,0,0,0) 5px
+      );
+      pointer-events: none;
     }
     .waitlist-eyebrow {
-      font-family: var(--sans); font-size: 0.7rem; font-weight: 500;
-      letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
-      margin-bottom: 1.5rem;
-      display: flex; align-items: center; gap: 1rem;
+      font-family: var(--mono); font-size: 1.05rem;
+      letter-spacing: 0.06em; margin-bottom: 1.5rem;
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--bg); color: var(--cream);
+      padding: 0.2rem 0.8rem;
     }
     .waitlist-eyebrow::before {
-      content: ''; display: block; width: 2rem; height: 1px; background: var(--rule);
+      content: '●'; color: var(--lime);
+      animation: blink 1s steps(2) infinite;
     }
     .waitlist-title {
-      font-family: var(--serif);
-      font-size: clamp(3rem, 8vw, 7rem);
-      font-weight: 400; color: var(--ink);
-      line-height: 0.95; letter-spacing: -0.03em;
-      margin-bottom: 3rem;
+      font-family: var(--display);
+      font-size: clamp(3rem, 11vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: -0.005em;
+      text-transform: uppercase;
+      color: var(--cream);
+      margin-bottom: 2.5rem;
       position: relative; z-index: 1;
     }
-    .waitlist-title em { font-style: italic; font-weight: 300; color: var(--rust); }
+    .waitlist-title em {
+      font-family: var(--serif); font-style: italic;
+      font-weight: 400; text-transform: none;
+      color: var(--yellow);
+      font-size: 1.1em;
+      letter-spacing: -0.02em;
+      -webkit-text-stroke: 0;
+    }
     .waitlist-form {
-      display: flex; gap: 0; max-width: 440px;
+      display: flex; gap: 0; max-width: 500px;
       position: relative; z-index: 1;
     }
     .waitlist-form input[type="email"] {
-      flex: 1; padding: 1rem 1.1rem;
-      min-height: 52px;
-      border: 1.5px solid var(--ink); border-right: none;
+      flex: 1; padding: 1.1rem 1.1rem;
+      min-height: 58px;
+      border: 2px solid var(--cream);
       background: var(--bg);
-      font-family: var(--sans); font-size: 0.9375rem;
-      color: var(--ink); outline: none;
+      font-family: var(--mono); font-size: 1.1rem;
+      color: var(--cream); outline: none;
     }
-    .waitlist-form input::placeholder { color: var(--muted); }
-    .waitlist-form input:focus { border-color: var(--rust); }
+    .waitlist-form input::placeholder { color: rgba(244,235,217,0.5); }
+    .waitlist-form input:focus { border-color: var(--yellow); }
     .waitlist-form button {
-      padding: 1rem 1.4rem; background: var(--ink); color: var(--bg);
-      border: 1.5px solid var(--ink);
-      min-height: 52px;
-      font-family: var(--sans); font-size: 0.8rem;
-      font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+      padding: 1.1rem 1.5rem; background: var(--yellow); color: var(--bg);
+      border: 2px solid var(--cream); border-left: none;
+      min-height: 58px;
+      font-family: var(--display); font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      cursor: pointer; white-space: nowrap; transition: background 0.2s;
     }
-    .waitlist-form button:hover { opacity: 0.75; }
+    .waitlist-form button:hover { background: var(--cream); }
     .waitlist-note {
-      font-size: 0.8125rem; color: var(--muted); margin-top: 0.8rem;
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--cream); opacity: 0.9; margin-top: 1rem;
       position: relative; z-index: 1;
     }
     .waitlist-success {
       display: none;
-      font-family: var(--serif); font-size: 1.3rem; font-weight: 300;
-      color: var(--ink); position: relative; z-index: 1;
+      font-family: var(--display); font-size: 1.2rem;
+      color: var(--yellow);
+      position: relative; z-index: 1;
     }
 
     /* ─── FOOTER ─── */
     footer {
-      padding: 2.5rem 1.75rem;
+      padding: 2.5rem 1.5rem;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 1rem;
+      background: var(--bg);
       border-top: 1px solid var(--rule);
+      font-family: var(--mono); font-size: 1rem;
+      color: var(--cream);
     }
     .footer-logo {
-      font-family: var(--serif); font-size: 1.1rem; font-weight: 400;
-      color: var(--ink); text-decoration: none;
+      font-family: var(--display); font-size: 1rem;
+      color: var(--cream); text-decoration: none;
+      letter-spacing: 0.02em;
     }
-    .f-meta {
-      font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    .f-meta { opacity: 0.7; letter-spacing: 0.04em; }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal.in  { opacity: 1; transform: translateY(0); }
+    .reveal-l   { opacity: 0; transform: translateX(-30px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal-l.in{ opacity: 1; transform: translateX(0); }
+
+    /* Color-shift headline on scroll (applied to hero on scroll) */
+    @keyframes hueshift {
+      0%,100% { filter: hue-rotate(0deg); }
+      50%     { filter: hue-rotate(-20deg); }
+    }
+    .hero-title { animation: hueshift 9s ease-in-out infinite; }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- PRELOADER -->
+<!-- PRELOADER: SMPTE BARS -->
 <div class="preloader" id="preloader">
-  <div class="load-wrapper">
-    <span class="load">B</span><span
-    class="load load-1">a</span><span
-    class="load load-2">r</span><span
-    class="load load-3">t</span><span
-    class="load load-4">e</span><span
-    class="load load-5">r</span><span
-    class="load load-6">h</span><span
-    class="load load-7">a</span><span
-    class="load load-8">u</span><span
-    class="load load-9">s</span>
-  </div>
-  <p class="preloader-sub">Singapore · Creative Exchange</p>
+  <div class="smpte"><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  <div class="preload-msg"><span class="preload-dot"></span>SIGNAL LOCK // BARTERHAUS SG · BROADCAST 001 · TUNING IN…</div>
 </div>
 
 <!-- NAV OVERLAY -->
 <div class="nav-overlay" id="nav-overlay">
-  <button class="nav-overlay-close" onclick="closeNav()">×</button>
+  <button class="nav-overlay-close" onclick="closeNav()" aria-label="Close">×</button>
   <a href="#" onclick="closeNav()">Home</a>
   <a href="#how" onclick="closeNav()">How it works</a>
-  <a href="#who" onclick="closeNav()">Who it's for</a>
+  <a href="#who" onclick="closeNav()">Who's in</a>
   <a href="#credits" onclick="closeNav()">The credits</a>
   <a href="#waitlist" onclick="closeNav()">Join the Haus</a>
-  <div class="nav-overlay-meta">SG · EST. 2025 · 001</div>
+  <div class="nav-overlay-meta">SG · EST. 2025 · BROADCAST 001</div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker" id="ticker">
+  <div class="ticker-inner">
+    <span>Now broadcasting from Singapore</span>
+    <span>Music + art teachers first</span>
+    <span>3 bonus credits on signup</span>
+    <span>No money. No pressure. No compromises</span>
+    <span>Signal 001 · 2025</span>
+    <span>Now broadcasting from Singapore</span>
+    <span>Music + art teachers first</span>
+    <span>3 bonus credits on signup</span>
+    <span>No money. No pressure. No compromises</span>
+    <span>Signal 001 · 2025</span>
+  </div>
 </div>
 
 <!-- NAV -->
 <nav class="navigation" id="nav">
-  <a class="nav-logo" href="#">
-    <em>Barter</em><em>haus</em>
-  </a>
-  <button class="nav-hamburger" onclick="openNav()" aria-label="Menu">
-    <span></span><span></span>
-  </button>
-  <span class="nav-star">✳</span>
+  <a class="nav-logo" href="#">BARTERHAUS</a>
+  <div class="nav-meta">
+    <span>ON AIR</span>
+    <span>CH.001</span>
+    <span id="clock">--:--:--</span>
+  </div>
+  <button class="nav-hamburger" onclick="openNav()" aria-label="Menu">MENU</button>
 </nav>
 
 <!-- HERO -->
 <section class="hero-header">
-  <div class="large-text-wrapper" aria-hidden="true">
-    <div class="large-text">Bh</div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <div class="hero-chrome">
+    <span class="chip live">● LIVE</span>
+    <span class="chip">REC · 2025</span>
+    <span class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span>SG_01 // CREATIVE EXCHANGE</span>
   </div>
 
-  <div class="circle-badge" aria-hidden="true">
-    <svg viewBox="0 0 100 100">
-      <defs>
-        <path id="cp" d="M50,50 m-35,0 a35,35 0 1,1 70,0 a35,35 0 1,1,-70,0"/>
-      </defs>
-      <text font-family="DM Sans,sans-serif" font-size="10" fill="#000" font-weight="500" letter-spacing="2">
-        <textPath href="#cp">BARTERHAUS · SG · 2025 · ✦ · </textPath>
-      </text>
-    </svg>
-    <div class="circle-badge-inner">⊕</div>
+  <h1 class="hero-title">
+    <span class="line">More than</span>
+    <span class="line split-color">a hobby.</span>
+    <span class="line italic">Less than</span>
+    <span class="line outline">a job.</span>
+  </h1>
+
+  <div class="hero-body">
+    <p class="hero-lede">Trade what you love for what you need. <em>No money. No pressure.</em> A new signal for people who create — starting in Singapore with music &amp; art teachers.</p>
+    <div>
+      <div class="hero-form">
+        <input type="email" id="hero-email" placeholder="your@email.com" aria-label="Your email" />
+        <button onclick="handleSignup('hero-email','hero-success')">Tune In ▶</button>
+      </div>
+      <div class="success-msg" id="hero-success">✦ YOU'RE IN THE HAUS.</div>
+      <p class="hero-note">3 bonus credits on launch · No spam · No pitch</p>
+    </div>
   </div>
-
-  <div class="headline-row">More than</div>
-  <div class="headline-row">a hobby.</div>
-
-  <div class="description-bracket">
-    <span class="bracket">(</span>
-    <p>Trade what you love for what you need.<br>
-       No money. No pressure. No compromises.<br><br>
-       Starting in Singapore with music &amp; art teachers.
-       3 bonus credits when you join.</p>
-    <span class="bracket">)</span>
-  </div>
-
-  <div class="headline-row"><em>Less than</em></div>
-  <div class="headline-row"><em>a job.</em></div>
-
-  <div class="hero-form">
-    <input type="email" id="hero-email" placeholder="your@email.com" />
-    <button onclick="handleSignup('hero-email','hero-success')">Get early access</button>
-  </div>
-  <div class="success-msg" id="hero-success">✦ &nbsp;You're in the Haus.</div>
-  <p class="hero-note">No spam · No pitch · Just an invite when we open</p>
 </section>
 
 <!-- §1 -->
-<hr class="s-rule"/>
-<div class="s-meta"><span class="s-num">1</span><span>The problem we're solving</span></div>
+<div class="ch-head reveal">
+  <span class="ch-num">CH.01</span>
+  <span class="ch-title">The problem we're solving</span>
+  <span class="ch-time">RUN TIME · 02:14</span>
+</div>
 
 <section class="tension">
-  <h2 class="section-title">There are only<br><em>three options.</em></h2>
+  <h2 class="section-title reveal">There are only <em class="pink">three options.</em></h2>
   <div class="t-cols">
-    <div class="t-col">
-      <div class="c-num">I</div>
+    <div class="t-col reveal">
+      <div class="tv">OPTION I</div>
       <h3>Turn it into a business</h3>
       <p>You start charging. Admin kicks in. Clients email at midnight. What you loved becomes a KPI. The joy erodes quietly — until it's gone.</p>
-      <p class="t-verdict">× Joy erodes</p>
+      <div class="verdict">× Joy erodes</div>
     </div>
-    <div class="t-col">
-      <div class="c-num">II</div>
+    <div class="t-col reveal">
+      <div class="tv">OPTION II</div>
       <h3>Do it for free</h3>
       <p>Generous, but unsustainable. It feels invisible. You gave your time, your craft, your energy — and walked away with nothing tangible.</p>
-      <p class="t-verdict">× Feels undervalued</p>
+      <div class="verdict">× Feels undervalued</div>
     </div>
-    <div class="t-col active">
-      <div class="c-num">III</div>
+    <div class="t-col active reveal">
+      <div class="tv">OPTION III</div>
       <h3>Barterhaus</h3>
       <p>Your craft earns credits. Credits unlock what you need. Value circulates through the community — without a price tag, without the pressure.</p>
-      <p class="t-verdict">✦ The third way</p>
+      <div class="verdict">✦ The third way</div>
     </div>
   </div>
 </section>
 
 <!-- §2 -->
-<hr class="s-rule"/>
-<div class="s-meta" id="how"><span class="s-num">2</span><span>How it works</span></div>
+<div class="ch-head reveal" id="how">
+  <span class="ch-num">CH.02</span>
+  <span class="ch-title">How it works</span>
+  <span class="ch-time">RUN TIME · 01:48</span>
+</div>
 
 <section class="how">
-  <h2 class="section-title">Simple enough<br>to explain <em>at a dinner table.</em></h2>
+  <h2 class="section-title reveal">Simple enough to explain <em>at a dinner table.</em></h2>
   <div class="how-steps">
-    <div class="how-step">
-      <div class="s-num">1</div>
+    <div class="how-step reveal">
+      <span class="badge">STEP 01</span>
       <h3>List what you offer</h3>
       <p>A piano lesson. A brand logo. A photography session. You define the unit — by hour or by deliverable. Your craft, your terms.</p>
       <div class="step-bg-num">01</div>
     </div>
-    <div class="how-step">
-      <div class="s-num">2</div>
+    <div class="how-step reveal">
+      <span class="badge">STEP 02</span>
       <h3>Earn Haus credits</h3>
-      <p>Complete a service, earn a credit. Every new member starts with 3 bonus credits — enough to receive before you give. Credits never expire and can never be cashed out.</p>
+      <p>Complete a service, earn a credit. Every new member starts with 3 bonus credits — enough to receive before you give. Credits never expire.</p>
       <div class="step-bg-num">02</div>
     </div>
-    <div class="how-step">
-      <div class="s-num">3</div>
+    <div class="how-step reveal">
+      <span class="badge">STEP 03</span>
       <h3>Spend on what you need</h3>
-      <p>Browse the Haus and spend your credits on someone else's skill. You don't have to trade directly — value flows freely across the whole community.</p>
+      <p>Browse the Haus and spend your credits on someone else's skill. You don't have to trade directly — value flows freely across the community.</p>
       <div class="step-bg-num">03</div>
     </div>
   </div>
 </section>
 
-<!-- MARQUEE -->
+<!-- MARQUEE: rainbow bars + scrolling slogans -->
 <div class="marquee-strip">
+  <div class="marquee-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="marquee-inner">
-    <span class="marquee-item">No money ·</span>
-    <span class="marquee-item"><span>Skills only</span> ·</span>
-    <span class="marquee-item">Trade freely ·</span>
-    <span class="marquee-item"><span>Credits never expire</span> ·</span>
-    <span class="marquee-item">No cash value ·</span>
-    <span class="marquee-item"><span>Community first</span> ·</span>
-    <span class="marquee-item">Singapore ·</span>
-    <span class="marquee-item"><span>Open to all creatives</span> ·</span>
-    <span class="marquee-item">No money ·</span>
-    <span class="marquee-item"><span>Skills only</span> ·</span>
-    <span class="marquee-item">Trade freely ·</span>
-    <span class="marquee-item"><span>Credits never expire</span> ·</span>
-    <span class="marquee-item">No cash value ·</span>
-    <span class="marquee-item"><span>Community first</span> ·</span>
-    <span class="marquee-item">Singapore ·</span>
-    <span class="marquee-item"><span>Open to all creatives</span> ·</span>
+    <span>No money</span><span class="sep">✦</span>
+    <span class="alt">Skills only</span><span class="sep">✦</span>
+    <span>Trade freely</span><span class="sep">✦</span>
+    <span class="alt2">Credits never expire</span><span class="sep">✦</span>
+    <span>No cash value</span><span class="sep">✦</span>
+    <span class="alt">Community first</span><span class="sep">✦</span>
+    <span>Singapore</span><span class="sep">✦</span>
+    <span class="alt2">Open to all creatives</span><span class="sep">✦</span>
+    <span>No money</span><span class="sep">✦</span>
+    <span class="alt">Skills only</span><span class="sep">✦</span>
+    <span>Trade freely</span><span class="sep">✦</span>
+    <span class="alt2">Credits never expire</span><span class="sep">✦</span>
+    <span>No cash value</span><span class="sep">✦</span>
+    <span class="alt">Community first</span><span class="sep">✦</span>
+    <span>Singapore</span><span class="sep">✦</span>
+    <span class="alt2">Open to all creatives</span><span class="sep">✦</span>
   </div>
+  <div class="marquee-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 </div>
 
 <!-- §3 -->
-<hr class="s-rule"/>
-<div class="s-meta" id="who"><span class="s-num">3</span><span>Who's in the Haus</span></div>
+<div class="ch-head reveal" id="who">
+  <span class="ch-num">CH.03</span>
+  <span class="ch-title">Who's in the Haus</span>
+  <span class="ch-time">RUN TIME · 03:02</span>
+</div>
 
 <section class="who">
-  <h2 class="section-title">Built for people<br><em>who create.</em></h2>
-  <div class="who-row"><span class="r-num">1</span><span class="r-type">🎹 Music Teachers</span><span class="r-desc">You teach scales and chord theory. Maybe you'd love a website, a headshot, or someone to design your studio flyer.</span><span class="r-trade">Lesson → Photography</span></div>
-  <div class="who-row"><span class="r-num">2</span><span class="r-type">🎨 Visual Artists</span><span class="r-desc">You paint, illustrate, design. You have a visual language the world needs. Trade it for a video, a tune, a copywriter.</span><span class="r-trade">Illustration → Video</span></div>
-  <div class="who-row"><span class="r-num">3</span><span class="r-type">📸 Photographers</span><span class="r-desc">A single shoot transforms a portfolio. In return — a music lesson, a logo, copy for your bio page.</span><span class="r-trade">Shoot → Copywriting</span></div>
-  <div class="who-row"><span class="r-num">4</span><span class="r-type">💃 Movement Teachers</span><span class="r-desc">Yoga, dance, martial arts. Your classes transform people physically. Let them transform your creative world in return.</span><span class="r-trade">Session → Design</span></div>
-  <div class="who-row"><span class="r-num">5</span><span class="r-type">✍️ Writers & Poets</span><span class="r-desc">Words are underrated until they're yours. Trade copy, editing, or storytelling for skills you've always wanted to learn.</span><span class="r-trade">Copy → Music lesson</span></div>
-  <div class="who-row"><span class="r-num">6</span><span class="r-type">🎬 Filmmakers</span><span class="r-desc">You make moving images that move people. Someone in the Haus needs a reel, a short, a memories video.</span><span class="r-trade">Edit → Composition</span></div>
+  <h2 class="section-title reveal">Built for people <em class="cyan">who create.</em></h2>
+  <div class="who-row reveal-l"><span class="r-num">01</span><span class="r-type">Music Teachers</span><span class="r-desc">You teach scales and chord theory. Maybe you'd love a website, a headshot, or someone to design your studio flyer.</span><span class="r-trade">Lesson → Photography</span></div>
+  <div class="who-row reveal-l"><span class="r-num">02</span><span class="r-type">Visual Artists</span><span class="r-desc">You paint, illustrate, design. You have a visual language the world needs. Trade it for a video, a tune, a copywriter.</span><span class="r-trade">Illustration → Video</span></div>
+  <div class="who-row reveal-l"><span class="r-num">03</span><span class="r-type">Photographers</span><span class="r-desc">A single shoot transforms a portfolio. In return — a music lesson, a logo, copy for your bio page.</span><span class="r-trade">Shoot → Copywriting</span></div>
+  <div class="who-row reveal-l"><span class="r-num">04</span><span class="r-type">Movement Teachers</span><span class="r-desc">Yoga, dance, martial arts. Your classes transform people physically. Let them transform your creative world in return.</span><span class="r-trade">Session → Design</span></div>
+  <div class="who-row reveal-l"><span class="r-num">05</span><span class="r-type">Writers &amp; Poets</span><span class="r-desc">Words are underrated until they're yours. Trade copy, editing, or storytelling for skills you've always wanted to learn.</span><span class="r-trade">Copy → Music lesson</span></div>
+  <div class="who-row reveal-l"><span class="r-num">06</span><span class="r-type">Filmmakers</span><span class="r-desc">You make moving images that move people. Someone in the Haus needs a reel, a short, a memories video.</span><span class="r-trade">Edit → Composition</span></div>
 </section>
 
 <!-- §4 -->
-<hr class="s-rule"/>
-<div class="s-meta" id="credits"><span class="s-num">4</span><span>The credit system</span></div>
+<div class="ch-head reveal" id="credits">
+  <span class="ch-num">CH.04</span>
+  <span class="ch-title">The credit system</span>
+  <span class="ch-time">RUN TIME · 02:55</span>
+</div>
 
 <section class="credits">
-  <h2 class="section-title">You don't have to<br><em>trade directly.</em></h2>
-  <p class="credits-intro">Classic barter fails because you need someone who wants exactly what you offer, right now. Haus credits break that deadlock. Help someone today — spend with someone else entirely, next month.</p>
+  <h2 class="section-title reveal">You don't have to <em class="yellow">trade directly.</em></h2>
+  <p class="credits-intro reveal">Classic barter fails because you need someone who wants exactly what you offer, right now. Haus credits break that deadlock. Help someone today — spend with someone else entirely, next month.</p>
   <div class="credits-body">
-    <div class="circle-grid">
-      <div class="cg-cell">
-        <div class="cg-circle accent"><strong>Priya</strong><span>Piano teacher</span></div>
-        <div class="cg-arrow r">→</div>
-        <div class="cg-arrow d">↓</div>
-      </div>
-      <div class="cg-cell">
-        <div class="cg-circle"><strong>Marcus</strong><span>Designer</span></div>
-        <div class="cg-arrow d">↓</div>
-      </div>
-      <div class="cg-cell">
-        <div class="cg-circle"><strong>Jia Li</strong><span>Photographer</span></div>
-        <div class="cg-arrow r">→</div>
-      </div>
-      <div class="cg-cell">
-        <div class="cg-circle"><strong>Rafi</strong><span>Filmmaker</span></div>
-      </div>
+    <div class="node-diagram-wrap reveal">
+      <svg class="node-svg" viewBox="0 0 400 340" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M100,65 C200,20 300,40 320,65"/>
+        <path d="M320,65 C360,170 340,250 310,275"/>
+        <path d="M310,275 C220,310 140,300 100,275"/>
+        <path d="M100,275 C40,200 50,120 100,65"/>
+        <path d="M100,65 L310,275" stroke-dasharray="3 8"/>
+        <path d="M320,65 L100,275" stroke-dasharray="3 8"/>
+      </svg>
+      <div class="node n1"><strong>Priya</strong><span>Piano</span></div>
+      <div class="node n2"><strong>Marcus</strong><span>Design</span></div>
+      <div class="node n3"><strong>Jia Li</strong><span>Photo</span></div>
+      <div class="node n4"><strong>Rafi</strong><span>Film</span></div>
     </div>
     <div class="credits-rules">
-      <div class="credit-item">
-        <div class="c-label">Rule 01</div>
+      <div class="credit-item reveal">
+        <div class="c-label">RULE 01</div>
         <h4>1 credit = 1 meaningful service</h4>
         <p>An hour of teaching, a delivered logo, a photography session. You and the other person agree on what's fair. Community guidelines keep it honest.</p>
       </div>
-      <div class="credit-item">
-        <div class="c-label">Rule 02</div>
+      <div class="credit-item reveal">
+        <div class="c-label">RULE 02</div>
         <h4>Credits never expire</h4>
         <p>No pressure to spend within a window. The Haus runs on goodwill and patience, not deadlines. Give when you can, receive when you need.</p>
       </div>
-      <div class="credit-item">
-        <div class="c-label">Rule 03</div>
+      <div class="credit-item reveal">
+        <div class="c-label">RULE 03</div>
         <h4>No cash out. Ever.</h4>
         <p>Credits are community tokens. They exist only here, in the Haus. The moment we attach a cash value, it becomes work. That's not what this is.</p>
       </div>
@@ -868,46 +1035,60 @@
 </section>
 
 <!-- §5 -->
-<hr class="s-rule"/>
-<div class="s-meta"><span class="s-num">5</span><span>The Haus promise</span></div>
+<div class="ch-head reveal">
+  <span class="ch-num">CH.05</span>
+  <span class="ch-title">The Haus promise</span>
+  <span class="ch-time">RUN TIME · 02:30</span>
+</div>
 
 <section class="promise">
-  <h2 class="section-title">What we will<br><em>never</em> do.</h2>
+  <h2 class="section-title reveal">What we will <em class="pink">never</em> do.</h2>
   <div class="promise-grid">
-    <div class="promise-item"><div class="p-label">Promise 01</div><h3>Show cash equivalents</h3><p>We will never display "your hour is worth $X". The moment we do, this becomes a job. Credits are credits — a different unit entirely.</p></div>
-    <div class="promise-item"><div class="p-label">Promise 02</div><h3>Let credits leave the Haus</h3><p>No cash out. No transfer to external wallets. Credits circulate within this community and nowhere else. That's what makes them mean something different.</p></div>
-    <div class="promise-item"><div class="p-label">Promise 03</div><h3>Punish you for bad reviews</h3><p>This isn't your livelihood. A low rating here doesn't threaten your rent. Do good work because you care, not because an algorithm penalises you.</p></div>
-    <div class="promise-item"><div class="p-label">Promise 04</div><h3>Leave disputes unresolved</h3><p>If something goes wrong, our team steps in. We investigate, we listen, we compensate the affected party in credits. The community is protected.</p></div>
-    <div class="promise-item"><div class="p-label">Promise 05</div><h3>Forget we're local</h3><p>We're in Singapore first because we want to build real relationships, not just user counts. The Haus stays rooted in community.</p></div>
-    <div class="promise-item"><div class="p-label">Promise 06</div><h3>Tell you what your passion is worth</h3><p>You define the terms. You set the unit. You decide when you offer and when you step back. Your craft, your pace, your rules.</p></div>
+    <div class="promise-item reveal"><div class="p-label">PROMISE 01</div><h3>Show cash equivalents</h3><p>We will never display "your hour is worth $X". The moment we do, this becomes a job. Credits are credits — a different unit entirely.</p></div>
+    <div class="promise-item reveal"><div class="p-label">PROMISE 02</div><h3>Let credits leave the Haus</h3><p>No cash out. No transfer to external wallets. Credits circulate within this community and nowhere else. That's what makes them mean something different.</p></div>
+    <div class="promise-item reveal"><div class="p-label">PROMISE 03</div><h3>Punish you for bad reviews</h3><p>This isn't your livelihood. A low rating here doesn't threaten your rent. Do good work because you care, not because an algorithm penalises you.</p></div>
+    <div class="promise-item reveal"><div class="p-label">PROMISE 04</div><h3>Leave disputes unresolved</h3><p>If something goes wrong, our team steps in. We investigate, we listen, we compensate the affected party in credits. The community is protected.</p></div>
+    <div class="promise-item reveal"><div class="p-label">PROMISE 05</div><h3>Forget we're local</h3><p>We're in Singapore first because we want to build real relationships, not just user counts. The Haus stays rooted in community.</p></div>
+    <div class="promise-item reveal"><div class="p-label">PROMISE 06</div><h3>Tell you what your passion is worth</h3><p>You define the terms. You set the unit. You decide when you offer and when you step back. Your craft, your pace, your rules.</p></div>
   </div>
 </section>
 
 <!-- WAITLIST -->
 <section class="waitlist" id="waitlist">
-  <div class="waitlist-bg" aria-hidden="true">Haus</div>
-  <div class="waitlist-eyebrow">Early access · Singapore</div>
-  <h2 class="waitlist-title">Be among<br>the first<br><em>in the Haus.</em></h2>
-  <div class="waitlist-form">
-    <input type="email" id="waitlist-email" placeholder="your@email.com" />
-    <button onclick="handleSignup('waitlist-email','waitlist-success')">Claim my spot</button>
+  <div class="waitlist-eyebrow">EARLY ACCESS · SINGAPORE</div>
+  <h2 class="waitlist-title reveal">Be among<br>the first<br><em>in the Haus.</em></h2>
+  <div class="waitlist-form reveal">
+    <input type="email" id="waitlist-email" placeholder="your@email.com" aria-label="Your email" />
+    <button onclick="handleSignup('waitlist-email','waitlist-success')">Claim spot ▶</button>
   </div>
-  <div class="waitlist-success" id="waitlist-success">✦ &nbsp;You're in. We'll reach out when doors open.</div>
+  <div class="waitlist-success" id="waitlist-success">✦ YOU'RE IN. WE'LL REACH OUT WHEN DOORS OPEN.</div>
   <p class="waitlist-note">Opening to music &amp; art teachers first · 3 bonus credits on launch · No spam, ever.</p>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <a class="footer-logo" href="#">Barterhaus</a>
-  <span class="f-meta">More than a hobby. Less than a job.</span>
-  <span class="f-meta">SG · 2025 · 001</span>
+  <a class="footer-logo" href="#">▶ BARTERHAUS</a>
+  <span class="f-meta">MORE THAN A HOBBY · LESS THAN A JOB</span>
+  <span class="f-meta">SG · 2025 · SIGNAL 001</span>
 </footer>
 
 <script>
   // Preloader
   window.addEventListener('load', () => {
-    setTimeout(() => document.getElementById('preloader').classList.add('hidden'), 1800);
+    setTimeout(() => {
+      document.getElementById('preloader').classList.add('hidden');
+      document.getElementById('ticker').classList.add('visible');
+    }, 1600);
   });
+
+  // Clock in nav (broadcast-style)
+  function tick(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const el = document.getElementById('clock');
+    if (el) el.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+  setInterval(tick, 1000); tick();
 
   // Nav overlay
   function openNav()  { document.getElementById('nav-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -917,6 +1098,17 @@
   window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
   });
+
+  // Scroll reveal (IntersectionObserver)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 60);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal, .reveal-l').forEach(el => io.observe(el));
 
   // Waitlist signup
   function handleSignup(inputId, successId) {
