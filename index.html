@@ -8,1059 +8,1012 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ─────────────────────────────────────────────────────────────
-       BARTERHAUS · Paintboxed editorial, horizontal rail.
-       Scroll down ⇒ translates to scroll right. Snap points per
-       slide. Each slide is viewport-width, designed to fit at
-       both laptop (≥1024px) and phone (≥375px).
-       ───────────────────────────────────────────────────────────── */
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --paper:   #FAFAF7;
       --paper2:  #F3F1EA;
       --ink:     #0A0A0A;
-      --muted:   #6B6760;
+      --muted:   #706C66;
       --rule:    #E4E0D6;
       --accent:  #C53D2E;
       --blue:    #2C5B7A;
       --cream:   #EFE8D6;
       --serif:   'Fraunces', Georgia, serif;
       --sans:    'Inter', system-ui, sans-serif;
-      --slide-pad: clamp(1.25rem, 4vw, 4rem);
+
+      /* Chrome bar heights — slide padding is built around these */
+      --cht:  56px;   /* top chrome height  */
+      --chb:  44px;   /* bottom chrome height */
+      --gutter: clamp(1.5rem, 4vw, 3.5rem);
     }
 
     html, body {
-      height: 100%;
+      height: 100%; width: 100%;
       overflow: hidden;
       background: var(--paper);
       color: var(--ink);
       font-family: var(--sans);
       font-size: 15px;
-      line-height: 1.55;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
 
     ::selection { background: var(--ink); color: var(--paper); }
 
-    /* ── Pixel cursor ── */
+    /* ── Pixel cursor (retro touch from reference) ── */
     @media (hover: hover) and (pointer: fine) {
-      body, a, button, input {
-        cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><rect x='2' y='2' width='2' height='2' fill='black'/><rect x='4' y='4' width='2' height='2' fill='black'/><rect x='6' y='6' width='2' height='2' fill='black'/><rect x='8' y='8' width='2' height='2' fill='black'/><rect x='10' y='10' width='2' height='2' fill='black'/><rect x='4' y='6' width='2' height='2' fill='black'/><rect x='4' y='8' width='2' height='2' fill='black'/><rect x='4' y='10' width='2' height='2' fill='black'/><rect x='4' y='12' width='2' height='2' fill='black'/><rect x='4' y='14' width='2' height='2' fill='black'/><rect x='4' y='16' width='2' height='2' fill='black'/><rect x='6' y='16' width='2' height='2' fill='black'/><rect x='12' y='12' width='2' height='2' fill='black'/><rect x='8' y='14' width='2' height='2' fill='black'/><rect x='10' y='14' width='2' height='2' fill='black'/><rect x='12' y='14' width='2' height='2' fill='black'/></svg>") 2 2, auto;
-      }
-      a, button { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><rect x='8' y='2' width='2' height='2' fill='black'/><rect x='6' y='4' width='2' height='2' fill='black'/><rect x='10' y='4' width='2' height='2' fill='black'/><rect x='4' y='6' width='2' height='2' fill='black'/><rect x='12' y='6' width='2' height='2' fill='black'/><rect x='4' y='8' width='2' height='2' fill='black'/><rect x='12' y='8' width='2' height='2' fill='black'/><rect x='6' y='10' width='2' height='2' fill='black'/><rect x='10' y='10' width='2' height='2' fill='black'/><rect x='8' y='12' width='2' height='2' fill='black'/><rect x='6' y='6' width='6' height='4' fill='white'/></svg>") 12 12, pointer;
-      }
+      *, *::before, *::after { cursor: none !important; }
     }
+    #cursor {
+      display: none;
+      position: fixed; z-index: 9990;
+      pointer-events: none;
+      width: 24px; height: 24px;
+      transform: translate(-2px, -2px);
+    }
+    @media (hover: hover) and (pointer: fine) { #cursor { display: block; } }
 
     /* ─── PRELOADER ─── */
-    .preloader {
-      position: fixed; inset: 0; z-index: 9999;
+    #preloader {
+      position: fixed; inset: 0; z-index: 9998;
       background: var(--paper);
       display: flex; align-items: center; justify-content: center;
       transition: opacity 0.6s ease, visibility 0.6s ease;
     }
-    .preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-    .preloader .logo {
-      font-family: var(--serif);
-      font-weight: 400;
-      font-size: clamp(3rem, 9vw, 7rem);
+    #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .pre-word {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(2.5rem, 6vw, 5rem);
       letter-spacing: -0.03em;
       font-variation-settings: "opsz" 144;
     }
-    .preloader .logo em { font-style: italic; font-weight: 300; }
-    .preloader .dot {
-      display: inline-block; width: 0.14em; height: 0.14em;
+    .pre-word em { font-style: italic; font-weight: 300; }
+    .pre-dot {
+      display: inline-block; width: 0.12em; height: 0.12em;
       border-radius: 50%; background: var(--ink);
-      vertical-align: 0.08em; margin-left: 0.08em;
-      animation: pdot 0.8s steps(2) infinite;
+      vertical-align: 0.1em; margin-left: 0.06em;
+      animation: blink 0.8s steps(2) infinite;
     }
-    @keyframes pdot { 50% { opacity: 0.2; } }
+    @keyframes blink { 50% { opacity: 0.15; } }
 
-    /* ─── CHROME (nav + progress) sits above the rail ─── */
-    .chrome {
+    /* ─── TOP CHROME ─── */
+    #chrome {
       position: fixed; top: 0; left: 0; right: 0;
-      z-index: 50;
-      padding: 1.2rem var(--slide-pad);
+      height: var(--cht);
+      z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--gutter);
       gap: 1rem;
-      font-size: 12px;
-      pointer-events: none;
-    }
-    .chrome > * { pointer-events: auto; }
-    .chrome a, .chrome button {
-      color: var(--ink); text-decoration: none;
-      background: none; border: none;
-      font: inherit;
+      background: var(--paper);
+      border-bottom: 1px solid var(--rule);
     }
     .brand {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(16px, 1.8vw, 20px);
-      letter-spacing: -0.02em;
-      line-height: 1;
+      font-family: var(--serif); font-weight: 500; font-size: clamp(22px, 2.4vw, 30px);
+      letter-spacing: -0.03em; line-height: 1;
+      color: var(--ink); text-decoration: none;
+      font-variation-settings: "opsz" 144;
     }
     .brand em { font-style: italic; font-weight: 300; }
-    .chrome-meta {
-      display: none; gap: 1.4rem;
-      font-family: var(--sans); font-weight: 500;
-      letter-spacing: 0.02em;
+    .nav-links {
+      display: none; gap: 2rem; align-items: center;
     }
-    @media (min-width: 900px) { .chrome-meta { display: flex; } }
-    .chrome-meta a { opacity: 0.75; transition: opacity 0.2s; }
-    .chrome-meta a:hover, .chrome-meta a.active { opacity: 1; }
+    @media (min-width: 860px) { .nav-links { display: flex; } }
+    .nav-links a {
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink); text-decoration: none;
+      opacity: 0.6; transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; }
     .menu-btn {
       font-family: var(--sans); font-size: 12px; font-weight: 500;
       letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 0.4rem 0; cursor: pointer;
+      color: var(--ink); background: none; border: none;
+      padding: 0.5rem 0; cursor: pointer;
     }
 
-    /* Bottom chrome: progress + counter */
-    .bchrome {
-      position: fixed; left: 0; right: 0; bottom: 0;
-      z-index: 50;
-      padding: 0.9rem var(--slide-pad) 1.1rem;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem;
-      font-family: var(--sans); font-size: 11px;
+    /* ─── BOTTOM CHROME ─── */
+    #bchrome {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: var(--chb);
+      z-index: 100;
+      display: flex; align-items: center;
+      padding: 0 var(--gutter);
+      gap: 1.5rem;
+      background: var(--paper);
+      border-top: 1px solid var(--rule);
+    }
+    .slide-counter {
+      font-family: var(--sans); font-size: 11px; font-weight: 500;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--muted);
-      pointer-events: none;
+      color: var(--muted); white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
     .prog-track {
-      flex: 1; height: 1px; background: var(--rule);
+      flex: 1; height: 1px; background: var(--rule); max-width: 400px;
       position: relative; overflow: hidden;
-      max-width: 420px;
     }
     .prog-fill {
-      position: absolute; inset: 0;
-      background: var(--ink);
-      transform-origin: left center;
-      transform: scaleX(0);
-      transition: transform 0.25s ease;
+      position: absolute; inset: 0; background: var(--ink);
+      transform-origin: left; transform: scaleX(0);
+      transition: transform 0.3s ease;
     }
-    .counter { font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .hint {
+    .scroll-hint {
       display: none;
-      white-space: nowrap;
+      font-family: var(--sans); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+      margin-left: auto;
     }
-    @media (min-width: 700px) { .hint { display: inline; } }
+    @media (min-width: 700px) { .scroll-hint { display: block; } }
+    .nav-arrows { display: none; gap: 4px; }
+    @media (min-width: 860px) { .nav-arrows { display: flex; } }
+    .nav-arrows button {
+      width: 28px; height: 28px;
+      background: var(--paper); border: 1px solid var(--rule);
+      font-family: var(--sans); font-size: 13px;
+      color: var(--ink); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .nav-arrows button:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .nav-arrows button:disabled { opacity: 0.3; pointer-events: none; }
 
-    /* ─── NAV OVERLAY ─── */
-    .overlay {
+    /* ─── OVERLAY NAV ─── */
+    #overlay {
       position: fixed; inset: 0; z-index: 500;
       background: var(--ink); color: var(--paper);
       display: flex; flex-direction: column; justify-content: center;
-      padding: 3rem var(--slide-pad);
+      padding: 4rem var(--gutter) 3rem;
       opacity: 0; visibility: hidden;
-      transition: opacity 0.35s, visibility 0.35s;
+      transition: opacity 0.3s, visibility 0.3s;
     }
-    .overlay.open { opacity: 1; visibility: visible; }
-    .overlay a {
+    #overlay.open { opacity: 1; visibility: visible; }
+    #overlay a {
       display: block;
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(2rem, 8vw, 5.5rem);
+      font-size: clamp(2rem, 7vw, 5rem);
       line-height: 1.1; letter-spacing: -0.03em;
       color: var(--paper); text-decoration: none;
-      padding: 0.1em 0;
-      transition: transform 0.2s, font-style 0.2s;
+      padding: 0.2em 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.2s;
     }
-    .overlay a em { font-style: italic; font-weight: 300; }
-    .overlay a:hover { transform: translateX(0.4em); }
-    .overlay .x {
-      position: absolute; top: 1.2rem; right: var(--slide-pad);
+    #overlay a:last-of-type { border-bottom: none; }
+    #overlay a:hover { transform: translateX(0.3em); }
+    #overlay a em { font-style: italic; font-weight: 300; }
+    #overlay .close-btn {
+      position: absolute; top: 1.4rem; right: var(--gutter);
       background: none; border: none; color: var(--paper);
-      font-size: 12px; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      cursor: pointer;
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
     }
-    .overlay .ometa {
-      position: absolute; bottom: 1.6rem; left: var(--slide-pad);
+    #overlay .ov-meta {
+      position: absolute; bottom: 1.5rem; left: var(--gutter);
       font-family: var(--sans); font-size: 11px;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      opacity: 0.55;
+      letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.45;
     }
 
-    /* ═════════════════════════════════════════════════════════════
-       THE RAIL. Horizontal scroll container.
-       ═════════════════════════════════════════════════════════════ */
-    .rail {
+    /* ═══════════════════════════════════════════════════════
+       RAIL — the horizontal scroll container
+       ═══════════════════════════════════════════════════════ */
+    #rail {
       display: flex;
-      height: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
+      position: fixed;
+      top: var(--cht); left: 0; right: 0;
+      bottom: var(--chb);
+      overflow-x: auto; overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
-    .rail::-webkit-scrollbar { display: none; }
+    #rail::-webkit-scrollbar { display: none; }
 
+    /* Every slide fills the rail exactly */
     .slide {
       flex: 0 0 100vw;
       width: 100vw;
       height: 100%;
-      padding: calc(var(--slide-pad) + 3rem) var(--slide-pad) calc(var(--slide-pad) + 2.5rem);
-      position: relative;
+      padding: clamp(1.5rem, 3vw, 2.5rem) var(--gutter);
       display: flex; flex-direction: column;
       overflow: hidden;
+      position: relative;
     }
 
-    /* ── Common slide elements ── */
-    .eyebrow {
+    /* Slides that can scroll internally */
+    .slide.scrollable { overflow-y: auto; overflow-x: hidden; }
+
+    /* ── Eyebrow label ── */
+    .ey {
       font-family: var(--sans); font-size: 11px; font-weight: 500;
-      letter-spacing: 0.18em; text-transform: uppercase;
+      letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--muted);
-      display: flex; align-items: center; gap: 0.7rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      flex-shrink: 0;
     }
-    .eyebrow::before {
-      content: ''; display: block; width: 1.6rem; height: 1px; background: var(--ink);
+    .ey::before {
+      content: ''; width: 1.4rem; height: 1px; background: var(--ink);
+      flex-shrink: 0;
     }
 
-    .title {
+    /* ── Section headline ── */
+    .head {
       font-family: var(--serif); font-weight: 400;
-      line-height: 0.94; letter-spacing: -0.035em;
+      line-height: 0.96; letter-spacing: -0.03em;
       color: var(--ink);
       font-variation-settings: "opsz" 144;
     }
-    .title em { font-style: italic; font-weight: 300; }
+    .head em { font-style: italic; font-weight: 300; }
 
-    .body {
-      font-family: var(--serif);
-      line-height: 1.45;
-      color: var(--ink);
-    }
-    .body em { font-style: italic; }
-    .body.sans {
+    /* ── Body copy ── */
+    .copy {
       font-family: var(--sans);
-      line-height: 1.6;
-      font-size: clamp(14px, 1.1vw, 16px);
+      font-size: clamp(13.5px, 1.05vw, 15.5px);
+      line-height: 1.65; color: var(--muted);
+    }
+    .copy.serif {
+      font-family: var(--serif);
+      font-size: clamp(1rem, 1.3vw, 1.25rem);
+      line-height: 1.45; color: var(--ink);
+    }
+    .copy.serif em { font-style: italic; }
+
+    /* ═══════════════════════════════════════════════════════
+       SLIDE 01 — HERO
+       ═══════════════════════════════════════════════════════ */
+    .s-hero { justify-content: space-between; gap: 1.5rem; }
+
+    .hero-hl {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(2.8rem, 11vw, 12rem);
+      line-height: 0.93;
+      letter-spacing: -0.04em;
+      font-variation-settings: "opsz" 144;
+      flex-shrink: 0;
+    }
+    .hero-hl .l2 { font-style: italic; font-weight: 300; }
+
+    .hero-foot {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem; align-items: end;
+    }
+    @media (min-width: 860px) {
+      .hero-foot { grid-template-columns: 1fr 1fr; gap: 3rem; }
     }
 
-    /* ═════════════════════════════════════════════════════════════
-       SLIDE 01 · HERO
-       ═════════════════════════════════════════════════════════════ */
-    .slide-hero { justify-content: space-between; }
-    .hero-title {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(3.2rem, 15vw, 18rem);
-      line-height: 0.88;
-      letter-spacing: -0.045em;
-      font-variation-settings: "opsz" 144;
-    }
-    .hero-title .l1 { display: block; }
-    .hero-title .l2 { display: block; font-style: italic; font-weight: 300; }
-    .hero-foot {
-      display: grid; grid-template-columns: 1fr; gap: 1.5rem;
-      align-items: end;
-      margin-top: auto;
-    }
-    @media (min-width: 900px) {
-      .hero-foot { grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: end; }
-    }
     .hero-lede {
       font-family: var(--serif);
-      font-size: clamp(1rem, 1.4vw, 1.35rem);
-      line-height: 1.45;
-      max-width: 34ch;
+      font-size: clamp(1rem, 1.3vw, 1.3rem);
+      line-height: 1.45; color: var(--ink);
+      max-width: 36ch;
     }
     .hero-lede em { font-style: italic; font-weight: 300; }
 
-    .mini-form {
-      width: 100%; max-width: 440px;
-      margin-left: auto;
+    .signup-wrap { max-width: 400px; width: 100%; }
+    @media (min-width: 860px) { .signup-wrap { margin-left: auto; } }
+    .signup-row {
+      display: flex;
+      border-bottom: 1.5px solid var(--ink);
+      align-items: center;
     }
-    .mini-form-row {
-      display: flex; border-bottom: 1px solid var(--ink);
-    }
-    .mini-form-row input {
+    .signup-row input {
       flex: 1; min-width: 0;
-      padding: 0.8rem 0.1rem;
+      padding: 0.7rem 0.2rem;
       border: none; background: transparent;
-      font-family: var(--sans); font-size: 15px;
-      color: var(--ink); outline: none;
+      font-family: var(--sans); font-size: 14px; color: var(--ink); outline: none;
     }
-    .mini-form-row input::placeholder { color: var(--muted); }
-    .mini-form-row button {
+    .signup-row input::placeholder { color: var(--muted); }
+    .signup-row button {
       background: none; border: none;
-      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      font-family: var(--sans); font-size: 11.5px; font-weight: 500;
       letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--ink); padding: 0 0 0 0.6rem;
-      cursor: pointer; white-space: nowrap;
+      color: var(--ink); cursor: pointer; white-space: nowrap;
+      padding: 0 0.2rem 0 0.8rem;
     }
-    .mini-form-row button:hover { color: var(--accent); }
-    .mini-form-row button::after { content: ' →'; }
-    .mini-note {
-      font-size: 12px; color: var(--muted); margin-top: 0.6rem;
-    }
-    .mini-ok {
-      display: none;
-      font-family: var(--serif); font-style: italic;
-      font-size: 1.1rem;
+    .signup-row button:hover { color: var(--accent); }
+    .signup-row button::after { content: ' →'; }
+    .signup-note { font-size: 11.5px; color: var(--muted); margin-top: 0.5rem; }
+    .signup-ok {
+      display: none; font-family: var(--serif); font-style: italic;
+      font-size: 1.05rem; color: var(--ink); padding: 0.7rem 0;
     }
 
-    /* ═════════════════════════════════════════════════════════════
-       SLIDE · SECTION INTRO (eyebrow + title + intro)
-       ═════════════════════════════════════════════════════════════ */
-    .slide-intro { justify-content: center; }
-    .slide-intro .eyebrow { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
-    .slide-intro .title {
-      font-size: clamp(3rem, 10vw, 11rem);
-      max-width: 18ch;
-    }
-    .slide-intro .intro {
-      font-family: var(--serif);
-      font-size: clamp(1rem, 1.5vw, 1.4rem);
-      line-height: 1.45;
-      max-width: 44ch;
-      margin-top: clamp(1.5rem, 3vw, 2.5rem);
-    }
-    .slide-intro .intro em { font-style: italic; font-weight: 300; color: var(--muted); }
+    /* ═══════════════════════════════════════════════════════
+       SLIDE — CHAPTER INTRO
+       ═══════════════════════════════════════════════════════ */
+    .s-intro { justify-content: center; gap: clamp(1rem, 2vw, 1.5rem); }
+    .s-intro .head { font-size: clamp(2.8rem, 9vw, 9rem); max-width: 16ch; }
+    .s-intro .copy.serif { max-width: 42ch; }
 
-    /* ═════════════════════════════════════════════════════════════
-       CARD SLIDES (polaroid-plate + year + body)
-       ═════════════════════════════════════════════════════════════ */
-    .slide-card {
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr auto;
-      gap: clamp(1rem, 2.5vw, 2rem);
-      align-content: center;
+    /* ═══════════════════════════════════════════════════════
+       SLIDE — CARD (plate left, text right)
+       ═══════════════════════════════════════════════════════ */
+    .s-card {
+      display: flex;
+      align-items: center;
+      gap: clamp(2rem, 5vw, 5rem);
+      justify-content: center;
     }
-    @media (min-width: 900px) {
-      .slide-card {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-        grid-template-rows: auto 1fr auto;
-        gap: clamp(2rem, 4vw, 4rem);
-        align-items: center;
-        justify-content: center;
-      }
-      .slide-card .plate-wrap { grid-row: 1 / span 3; }
+    /* Mobile: stack vertically */
+    @media (max-width: 699px) {
+      .s-card { flex-direction: column; justify-content: center; gap: 1.2rem; }
     }
 
     .plate-wrap {
-      align-self: center; justify-self: center;
-      width: min(420px, 70vw, 45vh);
+      flex: 0 0 auto;
+      width: min(340px, 42vw, 48vh);
     }
-    @media (max-width: 899px) {
-      .plate-wrap { width: min(300px, 62vw, 38vh); }
+    @media (max-width: 699px) {
+      .plate-wrap { width: min(220px, 55vw, 32vh); }
     }
+
     .plate {
+      aspect-ratio: 1 / 1.08;
       background: var(--paper2);
       border: 1px solid var(--rule);
-      aspect-ratio: 1 / 1.05;
-      padding: clamp(1rem, 3vw, 2rem);
+      padding: clamp(1.2rem, 3vw, 2rem);
       display: flex; align-items: center; justify-content: center;
-      box-shadow:
-        0 1px 2px rgba(0,0,0,0.04),
-        0 20px 40px -18px rgba(0,0,0,0.25);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 16px 32px -14px rgba(0,0,0,0.22);
       transform: rotate(var(--rot, -1.5deg));
       transition: transform 0.4s ease;
     }
-    .plate:hover { transform: rotate(0deg) translateY(-6px); }
-    .plate.dark { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-    .plate.cream { background: var(--cream); }
-    .plate.red { background: var(--accent); color: var(--paper); border-color: var(--accent); }
-    .plate.blue { background: var(--blue); color: var(--paper); border-color: var(--blue); }
-    .plate-inner { text-align: center; font-family: var(--serif); }
-    .plate-stamp {
-      display: inline-block;
-      padding: 0.25rem 0.6rem;
+    .plate:hover { transform: rotate(0deg) translateY(-5px); }
+
+    .plate-inner { text-align: center; }
+    .stamp {
+      display: inline-block; padding: 0.2rem 0.55rem;
       background: var(--ink); color: var(--paper);
       font-family: var(--sans); font-size: 10px; font-weight: 500;
       letter-spacing: 0.18em; text-transform: uppercase;
-      margin-bottom: clamp(0.8rem, 2vw, 1.5rem);
+      margin-bottom: clamp(0.8rem, 2vw, 1.4rem);
     }
-    .plate.dark .plate-stamp { background: var(--paper); color: var(--ink); }
-    .plate.red .plate-stamp, .plate.blue .plate-stamp { background: var(--paper); color: var(--ink); }
-    .plate-big {
+    .p-big {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.8rem, 4.4vw, 3.6rem);
-      line-height: 0.98;
-      letter-spacing: -0.02em;
+      font-size: clamp(1.5rem, 3.8vw, 3.2rem);
+      line-height: 1.0; letter-spacing: -0.02em;
+      color: var(--ink);
     }
-    .plate-big em { font-style: italic; font-weight: 300; }
-    .plate-sub {
-      margin-top: clamp(0.6rem, 1.5vw, 1rem);
+    .p-big em { font-style: italic; font-weight: 300; }
+    .p-sub {
       font-family: var(--serif); font-style: italic;
-      font-size: clamp(0.85rem, 1vw, 1.05rem);
-      opacity: 0.75;
+      font-size: clamp(0.82rem, 0.9vw, 1rem);
+      color: var(--muted); margin-top: clamp(0.5rem, 1.2vw, 0.9rem);
     }
 
-    .card-meta { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
-    .card-year {
+    /* Plate colour variants */
+    .plate.v-dark  { background: var(--ink); border-color: var(--ink); }
+    .plate.v-red   { background: var(--accent); border-color: var(--accent); }
+    .plate.v-blue  { background: var(--blue); border-color: var(--blue); }
+    .plate.v-cream { background: var(--cream); }
+    .plate.v-dark .p-big, .plate.v-red .p-big, .plate.v-blue .p-big { color: var(--paper); }
+    .plate.v-dark .p-sub, .plate.v-red .p-sub, .plate.v-blue .p-sub { color: rgba(250,250,247,0.7); }
+    .plate.v-dark .stamp { background: var(--paper); color: var(--ink); }
+    .plate.v-red .stamp, .plate.v-blue .stamp { background: rgba(250,250,247,0.9); color: var(--ink); }
+
+    .card-text {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 0.8rem;
+      max-width: 44ch;
+    }
+    .card-title {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.5rem, 2.5vw, 2.4rem);
-      letter-spacing: -0.01em;
+      font-size: clamp(1.3rem, 2.2vw, 2rem);
+      line-height: 1.05; letter-spacing: -0.02em;
       font-variation-settings: "opsz" 144;
     }
-    .card-year em { font-style: italic; font-weight: 300; color: var(--muted); }
-    .card-copy {
-      font-family: var(--sans);
-      font-size: clamp(14px, 1.1vw, 16.5px);
-      line-height: 1.6;
-      max-width: 46ch;
-    }
+    .card-title em { font-style: italic; font-weight: 300; color: var(--muted); }
     .card-verdict {
       font-family: var(--serif); font-style: italic;
-      font-size: clamp(1rem, 1.2vw, 1.2rem);
+      font-size: clamp(0.9rem, 1.1vw, 1.1rem);
       color: var(--accent);
     }
-    .card-verdict.good { color: var(--ink); }
-    .card-verdict.good::before { content: '✦ '; color: var(--accent); }
+    .card-verdict.pos { color: var(--ink); }
+    .card-verdict.pos::before { content: '✦ '; color: var(--accent); }
 
-    /* ═════════════════════════════════════════════════════════════
-       SLIDE · WHO (list)
-       ═════════════════════════════════════════════════════════════ */
-    .slide-who { justify-content: center; overflow-y: auto; }
-    .who-wrap {
+    /* ═══════════════════════════════════════════════════════
+       SLIDE — WHO LIST
+       ═══════════════════════════════════════════════════════ */
+    .s-who { gap: clamp(1.2rem, 2vw, 1.8rem); }
+    .s-who .head { font-size: clamp(2.2rem, 5.5vw, 5rem); flex-shrink: 0; }
+
+    .who-grid {
       display: grid; grid-template-columns: 1fr;
-      gap: clamp(1.5rem, 3vw, 3rem);
-      align-items: start;
+      flex: 1; min-height: 0;
     }
-    @media (min-width: 900px) {
-      .who-wrap { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: 4rem; }
+    @media (min-width: 860px) {
+      .who-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 4rem; align-items: start; }
     }
-    .who-head .title { font-size: clamp(2.4rem, 6vw, 5.5rem); max-width: 12ch; }
-    .who-list { display: flex; flex-direction: column; min-width: 0; }
-    .who-row {
+
+    .who-intro {
+      font-family: var(--serif);
+      font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+      line-height: 1.45; color: var(--ink);
+    }
+    .who-intro em { font-style: italic; }
+
+    .who-table { display: flex; flex-direction: column; min-width: 0; }
+    .wr {
       display: grid;
-      grid-template-columns: 2rem 1fr auto;
-      gap: 0.3rem 1rem;
+      grid-template-columns: 2rem 1fr;
+      gap: 0.1rem 0.8rem;
       align-items: baseline;
+      padding: clamp(0.55rem, 1vw, 0.85rem) 0;
+      border-top: 1px solid var(--rule);
+    }
+    .wr:last-child { border-bottom: 1px solid var(--rule); }
+    .wr .rn {
+      font-family: var(--serif); font-size: 13px;
+      color: var(--muted); grid-row: 1;
+    }
+    .wr .rt {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(1rem, 1.6vw, 1.5rem);
+      letter-spacing: -0.018em;
+      font-variation-settings: "opsz" 144;
+      grid-row: 1;
+    }
+    .wr .rt em { font-style: italic; font-weight: 300; }
+    .wr .rd {
+      grid-column: 2; grid-row: 2;
+      font-family: var(--sans); font-size: clamp(12px, 0.85vw, 13.5px);
+      line-height: 1.5; color: var(--muted);
+    }
+    .wr .rx {
+      grid-column: 2; grid-row: 3;
+      font-family: var(--serif); font-style: italic;
+      font-size: 12.5px; color: var(--accent); display: none;
+    }
+    @media (min-width: 700px) { .wr .rx { display: block; } }
+
+    /* ═══════════════════════════════════════════════════════
+       SLIDE — CREDITS
+       ═══════════════════════════════════════════════════════ */
+    .s-cred { gap: clamp(1.2rem, 2vw, 1.8rem); }
+    .s-cred .head { font-size: clamp(2rem, 4.5vw, 4.2rem); flex-shrink: 0; }
+
+    .cred-grid {
+      display: grid; grid-template-columns: 1fr;
+      flex: 1; min-height: 0;
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+    }
+    @media (min-width: 860px) {
+      .cred-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 4rem; align-items: center; }
+    }
+
+    .cred-left { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .node-dia {
+      position: relative;
+      width: 100%;
+      max-width: min(300px, 36vh);
+      aspect-ratio: 1.15;
+    }
+    @media (max-width: 859px) { .node-dia { max-width: min(240px, 28vh); } }
+    .node-dia svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .node-dia svg path { stroke: var(--rule); stroke-width: 1.5; fill: none; stroke-dasharray: 3 6; }
+
+    .nd {
+      position: absolute;
+      width: clamp(70px, 11vw, 105px); aspect-ratio: 1;
+      border-radius: 50%; border: 1px solid var(--ink);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 0.4rem;
+      background: var(--paper2);
+    }
+    .nd b { font-family: var(--serif); font-style: italic; font-size: clamp(0.8rem, 1vw, 0.95rem); font-weight: 400; }
+    .nd small { font-family: var(--sans); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 1px; }
+    .nd.na { top: 0;   left: 8%; background: var(--cream); transform: rotate(-4deg); }
+    .nd.nb { top: 8%;  right: 4%; transform: rotate(3deg); }
+    .nd.nc { bottom: 2%; left: 14%; background: var(--accent); transform: rotate(2deg); }
+    .nd.nc b, .nd.nc small { color: var(--paper); }
+    .nd.nd_ { bottom: 12%; right: 8%; background: var(--ink); transform: rotate(-2deg); }
+    .nd.nd_ b, .nd.nd_ small { color: var(--paper); }
+
+    .cred-rules { display: flex; flex-direction: column; min-width: 0; }
+    .cr {
       padding: clamp(0.8rem, 1.4vw, 1.2rem) 0;
       border-top: 1px solid var(--rule);
     }
-    .who-row:last-child { border-bottom: 1px solid var(--rule); }
-    .who-row .n {
-      font-family: var(--serif); font-size: 14px; color: var(--muted);
+    .cr:last-child { border-bottom: 1px solid var(--rule); }
+    .cr .cr-num {
+      font-family: var(--serif); font-size: clamp(1rem, 1.5vw, 1.4rem);
+      letter-spacing: -0.01em; font-variation-settings: "opsz" 144;
+      color: var(--ink);
     }
-    .who-row .t {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.05rem, 1.8vw, 1.6rem);
-      letter-spacing: -0.02em;
-      font-variation-settings: "opsz" 144;
-    }
-    .who-row .t em { font-style: italic; font-weight: 300; }
-    .who-row .d {
-      grid-column: 2 / -1;
-      font-family: var(--sans); font-size: 13px; line-height: 1.55;
-      color: var(--muted);
-    }
-    .who-row .x {
-      font-family: var(--serif); font-style: italic;
-      font-size: 13.5px; color: var(--accent);
-      white-space: nowrap; display: none;
-    }
-    @media (min-width: 700px) { .who-row .x { display: inline; } }
-
-    /* ═════════════════════════════════════════════════════════════
-       SLIDE · CREDITS (diagram + rules)
-       ═════════════════════════════════════════════════════════════ */
-    .slide-credits { justify-content: center; overflow-y: auto; }
-    .cred-wrap {
-      display: grid; grid-template-columns: 1fr;
-      gap: clamp(1.2rem, 2.5vw, 2.5rem);
-      align-items: start;
-    }
-    @media (min-width: 900px) {
-      .cred-wrap {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        gap: clamp(2rem, 4vw, 4rem);
-        align-items: center;
-      }
-    }
-    .cred-left { display: flex; flex-direction: column; gap: clamp(1rem, 2vw, 1.5rem); min-width: 0; }
-    .cred-head .title {
-      font-size: clamp(2rem, 5vw, 4rem);
-      max-width: 14ch;
-    }
-    .cred-head .intro {
-      font-family: var(--serif); margin-top: 0.8rem;
-      font-size: clamp(0.9rem, 1.05vw, 1.1rem);
-      line-height: 1.45; max-width: 40ch;
-    }
-    .cred-head .intro em { font-style: italic; color: var(--muted); }
-
-    .node-wrap {
-      position: relative;
-      width: 100%;
-      max-width: min(360px, 38vh);
-      aspect-ratio: 1.15;
-      margin: 0;
-    }
-    @media (max-width: 899px) {
-      .node-wrap { max-width: min(320px, 34vh); margin: 0 auto; }
-    }
-    .node {
-      position: absolute;
-      width: clamp(90px, 14vw, 130px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: 1px solid var(--ink);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 0.5rem;
-      font-family: var(--serif);
-      background: var(--paper2);
-      box-shadow: 0 6px 18px -8px rgba(0,0,0,0.25);
-    }
-    .node strong {
-      font-size: clamp(0.9rem, 1.1vw, 1.05rem);
-      font-weight: 400; font-style: italic;
-    }
-    .node span {
-      font-family: var(--sans); font-size: 10px;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted); margin-top: 0.15rem;
-    }
-    .n1 { top: 0; left: 6%; background: var(--cream); transform: rotate(-4deg); }
-    .n2 { top: 8%; right: 2%; transform: rotate(3deg); }
-    .n3 { bottom: 4%; left: 12%; background: var(--accent); color: var(--paper); transform: rotate(2deg); }
-    .n3 strong, .n3 span { color: var(--paper); }
-    .n4 { bottom: 14%; right: 8%; background: var(--ink); color: var(--paper); transform: rotate(-2deg); }
-    .n4 strong, .n4 span { color: var(--paper); }
-    .node-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .node-svg path {
-      stroke: var(--ink); stroke-width: 1; fill: none;
-      stroke-dasharray: 3 5; opacity: 0.6;
-    }
-
-    .cred-rules { display: flex; flex-direction: column; min-width: 0; }
-    .cred-item { padding: clamp(0.8rem, 1.5vw, 1.4rem) 0; border-top: 1px solid var(--rule); }
-    .cred-item:last-child { border-bottom: 1px solid var(--rule); }
-    .cred-item .yr {
-      font-family: var(--serif); font-size: clamp(1.2rem, 1.8vw, 1.6rem);
-      letter-spacing: -0.01em;
-      font-variation-settings: "opsz" 144;
-    }
-    .cred-item h4 {
+    .cr h4 {
       font-family: var(--serif); font-style: italic; font-weight: 300;
-      font-size: clamp(1rem, 1.4vw, 1.25rem);
-      line-height: 1.2; margin: 0.2rem 0 0.4rem;
+      font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+      line-height: 1.2; margin: 0.2rem 0 0.35rem;
     }
-    .cred-item p {
-      font-family: var(--sans); font-size: 13.5px;
-      line-height: 1.55; color: var(--muted);
-    }
+    .cr p { font-family: var(--sans); font-size: clamp(12.5px, 0.88vw, 13.5px); line-height: 1.6; color: var(--muted); }
 
-    /* ═════════════════════════════════════════════════════════════
-       SLIDE · WAITLIST (final)
-       ═════════════════════════════════════════════════════════════ */
-    .slide-wait {
+    /* ═══════════════════════════════════════════════════════
+       SLIDE — WAITLIST
+       ═══════════════════════════════════════════════════════ */
+    .s-wait {
       background: var(--paper2);
-      justify-content: space-between;
+      justify-content: space-between; gap: 1.5rem;
     }
-    .wait-title {
+    .wait-hl {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(2.8rem, 11vw, 13rem);
-      line-height: 0.9; letter-spacing: -0.04em;
+      font-size: clamp(2.5rem, 10vw, 10rem);
+      line-height: 0.93; letter-spacing: -0.04em;
       font-variation-settings: "opsz" 144;
+      flex-shrink: 0;
     }
-    .wait-title em { font-style: italic; font-weight: 300; }
+    .wait-hl em { font-style: italic; font-weight: 300; }
     .wait-foot {
-      display: grid; grid-template-columns: 1fr; gap: 1.5rem;
-      margin-top: auto; align-items: end;
+      display: grid; grid-template-columns: 1fr;
+      gap: 1.5rem; align-items: end;
     }
-    @media (min-width: 900px) {
-      .wait-foot { grid-template-columns: 1fr 1.2fr; gap: 3rem; }
+    @media (min-width: 860px) {
+      .wait-foot { grid-template-columns: 1fr 1fr; gap: 3rem; }
     }
-    .wait-copy {
+    .wait-sub {
       font-family: var(--serif);
       font-size: clamp(1rem, 1.3vw, 1.3rem);
-      line-height: 1.45; max-width: 34ch;
+      line-height: 1.45; color: var(--ink); max-width: 34ch;
     }
-    .wait-copy em { font-style: italic; }
-    .wait-form { width: 100%; max-width: 520px; margin-left: auto; }
+    .wait-sub em { font-style: italic; }
 
-    /* ═════════════════════════════════════════════════════════════
-       SLIDE · CLOSING LINE (footer)
-       ═════════════════════════════════════════════════════════════ */
-    .slide-close { justify-content: center; align-items: flex-start; }
-    .close-title {
+    /* ═══════════════════════════════════════════════════════
+       SLIDE — CLOSING
+       ═══════════════════════════════════════════════════════ */
+    .s-close { justify-content: center; gap: 2rem; }
+    .close-hl {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(2.6rem, 8vw, 9rem);
-      line-height: 0.95; letter-spacing: -0.035em;
+      font-size: clamp(2.4rem, 7.5vw, 7.5rem);
+      line-height: 0.96; letter-spacing: -0.035em;
       font-variation-settings: "opsz" 144;
     }
-    .close-title em { font-style: italic; font-weight: 300; }
+    .close-hl em { font-style: italic; font-weight: 300; }
     .close-meta {
-      font-family: var(--sans); font-size: 11px;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--muted);
-      display: flex; flex-wrap: wrap; gap: 1.5rem;
-      margin-top: 2.5rem;
+      display: flex; flex-wrap: wrap; gap: 1rem 2rem;
+      font-family: var(--sans); font-size: 11.5px;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
     }
-    .close-meta a { color: inherit; text-decoration: none; }
+    .close-meta a { color: var(--muted); text-decoration: none; }
     .close-meta a:hover { color: var(--ink); }
 
-    /* ═════════════════════════════════════════════════════════════
-       KEYBOARD / NAV INDICATORS
-       ═════════════════════════════════════════════════════════════ */
-    .arrows {
-      position: fixed; bottom: 3.3rem; right: var(--slide-pad);
-      display: none; gap: 0.4rem; z-index: 51;
-    }
-    @media (min-width: 900px) { .arrows { display: flex; } }
-    .arrows button {
-      width: 32px; height: 32px;
-      background: var(--paper); border: 1px solid var(--ink);
-      font-family: var(--sans); color: var(--ink);
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      transition: background 0.15s;
-    }
-    .arrows button:hover { background: var(--ink); color: var(--paper); }
-    .arrows button:disabled { opacity: 0.3; cursor: default; }
-
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     }
   </style>
 </head>
 <body>
 
+<!-- Pixel cursor SVG -->
+<svg id="cursor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2"  y="2"  width="2" height="2" fill="#0A0A0A"/>
+  <rect x="4"  y="4"  width="2" height="2" fill="#0A0A0A"/>
+  <rect x="6"  y="6"  width="2" height="2" fill="#0A0A0A"/>
+  <rect x="8"  y="8"  width="2" height="2" fill="#0A0A0A"/>
+  <rect x="10" y="10" width="2" height="2" fill="#0A0A0A"/>
+  <rect x="4"  y="6"  width="2" height="6" fill="#0A0A0A"/>
+  <rect x="4"  y="12" width="2" height="6" fill="#0A0A0A"/>
+  <rect x="6"  y="16" width="2" height="2" fill="#0A0A0A"/>
+  <rect x="8"  y="14" width="4" height="2" fill="#0A0A0A"/>
+  <rect x="12" y="12" width="2" height="2" fill="#0A0A0A"/>
+</svg>
+
 <!-- PRELOADER -->
-<div class="preloader" id="preloader">
-  <div class="logo">Barter<em>haus</em><span class="dot"></span></div>
+<div id="preloader">
+  <span class="pre-word">Barter<em>haus</em><span class="pre-dot"></span></span>
 </div>
 
 <!-- NAV OVERLAY -->
-<div class="overlay" id="overlay">
-  <button class="x" onclick="closeNav()">Close ×</button>
-  <a href="#0" data-i="0" onclick="goto(event, 0)">Intro</a>
-  <a href="#1" data-i="1" onclick="goto(event, 1)"><em>How</em> it works</a>
-  <a href="#9" data-i="9" onclick="goto(event, 9)">Who's in</a>
-  <a href="#10" data-i="10" onclick="goto(event, 10)">The <em>credits</em></a>
-  <a href="#11" data-i="11" onclick="goto(event, 11)">Promise</a>
-  <a href="#15" data-i="15" onclick="goto(event, 15)">Join the Haus</a>
-  <div class="ometa">Singapore. Est. 2025. Signal 001.</div>
+<div id="overlay">
+  <button class="close-btn" onclick="closeNav()">Close ×</button>
+  <a href="#" onclick="goto(event,0)">Home</a>
+  <a href="#" onclick="goto(event,1)"><em>How</em> it works</a>
+  <a href="#" onclick="goto(event,9)">Who's in</a>
+  <a href="#" onclick="goto(event,10)">The <em>credits</em></a>
+  <a href="#" onclick="goto(event,11)">Promise</a>
+  <a href="#" onclick="goto(event,15)">Join the Haus</a>
+  <div class="ov-meta">Singapore. Est. 2025. Signal 001.</div>
 </div>
 
 <!-- TOP CHROME -->
-<div class="chrome">
-  <a class="brand" href="#0" onclick="goto(event, 0)">Barter<em>haus</em><span class="dot"></span></a>
-  <div class="chrome-meta">
-    <a href="#1" onclick="goto(event, 1)">How</a>
-    <a href="#9" onclick="goto(event, 9)">Who</a>
-    <a href="#10" onclick="goto(event, 10)">Credits</a>
-    <a href="#15" onclick="goto(event, 15)">Join</a>
-  </div>
+<header id="chrome">
+  <a class="brand" href="#" onclick="goto(event,0)">Barter<em>haus</em></a>
+  <nav class="nav-links">
+    <a href="#" onclick="goto(event,1)">How</a>
+    <a href="#" onclick="goto(event,9)">Who</a>
+    <a href="#" onclick="goto(event,10)">Credits</a>
+    <a href="#" onclick="goto(event,15)">Join</a>
+  </nav>
   <button class="menu-btn" onclick="openNav()">Menu</button>
-</div>
+</header>
 
 <!-- BOTTOM CHROME -->
-<div class="bchrome">
-  <span class="counter"><span id="now">01</span> / <span id="total">16</span></span>
+<footer id="bchrome">
+  <span class="slide-counter"><span id="now">01</span> / <span id="tot">17</span></span>
   <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
-  <span class="hint">Scroll, swipe, or use arrows →</span>
-</div>
-
-<!-- ARROWS -->
-<div class="arrows">
-  <button id="prev" onclick="step(-1)" aria-label="Previous">←</button>
-  <button id="next" onclick="step(1)" aria-label="Next">→</button>
-</div>
+  <span class="scroll-hint">Scroll to navigate</span>
+  <div class="nav-arrows">
+    <button id="btn-prev" onclick="step(-1)" aria-label="Previous">←</button>
+    <button id="btn-next" onclick="step(1)"  aria-label="Next">→</button>
+  </div>
+</footer>
 
 <!-- THE RAIL -->
-<main class="rail" id="rail">
+<main id="rail">
 
-  <!-- 0. HERO -->
-  <section class="slide slide-hero" data-title="Intro">
-    <div class="eyebrow">Signal 001. Singapore. 2025.</div>
-    <h1 class="hero-title" style="margin-top: auto;">
-      <span class="l1">More than a hobby.</span>
+  <!-- 00 HERO -->
+  <section class="slide s-hero">
+    <div class="ey">Signal 001. Singapore. 2025.</div>
+    <h1 class="hero-hl">
+      <span class="l1">More than a hobby.</span><br>
       <span class="l2">Less than a job.</span>
     </h1>
     <div class="hero-foot">
-      <p class="hero-lede">A creative exchange for people who make things. Trade what you love for what you need. <em>No money, no pressure, no compromises.</em></p>
-      <div class="mini-form">
-        <div class="mini-form-row" id="hero-form">
-          <input type="email" id="hero-email" placeholder="your@email.com" aria-label="Your email" />
-          <button onclick="handleSignup('hero-email','hero-ok','hero-form')">Get early access</button>
+      <p class="hero-lede">A creative exchange starting in Singapore. Trade what you love for what you need. <em>No money, no pressure, no compromises.</em></p>
+      <div class="signup-wrap">
+        <div class="signup-row" id="hf">
+          <input type="email" id="h-em" placeholder="your@email.com" aria-label="Email"/>
+          <button onclick="signup('h-em','h-ok','hf')">Get early access</button>
         </div>
-        <div class="mini-ok" id="hero-ok">✦ You're in the Haus.</div>
-        <p class="mini-note">Three bonus credits on launch. No spam.</p>
+        <div class="signup-ok" id="h-ok">✦ You're in the Haus.</div>
+        <p class="signup-note">Three bonus credits on launch. No spam.</p>
       </div>
     </div>
   </section>
 
-  <!-- 1. HOW INTRO -->
-  <section class="slide slide-intro" data-title="How it works" id="how">
-    <div class="eyebrow">Chapter 01. How it works.</div>
-    <h2 class="title" style="margin-top: 1rem;">Simple enough to explain<br><em>at a dinner table.</em></h2>
-    <p class="intro">Three steps. No jargon. <em>If it takes more than a minute to describe, we haven't built it right.</em></p>
+  <!-- 01 HOW INTRO -->
+  <section class="slide s-intro">
+    <div class="ey">Chapter 01. How it works.</div>
+    <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">Simple enough to explain<br><em>at a dinner table.</em></h2>
+    <p class="copy serif">Three steps. No jargon. <em>If it takes more than a minute to describe, we haven't built it right.</em></p>
   </section>
 
-  <!-- 2. STEP 01 -->
-  <section class="slide slide-card" data-title="Step 01">
-    <div class="plate-wrap"><div class="plate" style="--rot:-2deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Step 01</div>
-        <div class="plate-big"><em>List</em> what you offer.</div>
-        <div class="plate-sub">Your craft, your unit, your terms.</div>
+  <!-- 02 STEP 01 -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate" style="--rot:-2deg;">
+        <div class="plate-inner">
+          <div class="stamp">Step 01</div>
+          <div class="p-big"><em>List</em> what you offer.</div>
+          <div class="p-sub">Your craft, your unit, your terms.</div>
+        </div>
       </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">01 of 03</div>
-      <div class="card-year">A piano lesson. <em>A brand logo.</em></div>
-      <p class="card-copy">You define the unit. Offer by the hour or by the deliverable. It might be a photography session, a poem, a tuned guitar. Your craft, your rules.</p>
+    </div>
+    <div class="card-text">
+      <div class="ey">01 of 03</div>
+      <div class="card-title">A piano lesson. <em>A brand logo.</em></div>
+      <p class="copy">Offer by the hour or by the deliverable. A photography session, a poem, a tuned guitar. Your craft, your rules.</p>
     </div>
   </section>
 
-  <!-- 3. STEP 02 -->
-  <section class="slide slide-card" data-title="Step 02">
-    <div class="plate-wrap"><div class="plate red" style="--rot:1.5deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Step 02</div>
-        <div class="plate-big"><em>Earn</em> Haus credits.</div>
-        <div class="plate-sub">Plus three bonus credits at signup.</div>
+  <!-- 03 STEP 02 -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate v-red" style="--rot:1.5deg;">
+        <div class="plate-inner">
+          <div class="stamp">Step 02</div>
+          <div class="p-big"><em>Earn</em> Haus credits.</div>
+          <div class="p-sub">Plus three bonus credits at signup.</div>
+        </div>
       </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">02 of 03</div>
-      <div class="card-year"><em>One service.</em> One credit.</div>
-      <p class="card-copy">Complete a service, earn a credit. Every new member starts with three bonus credits. Enough to receive before you give. Credits never expire.</p>
+    </div>
+    <div class="card-text">
+      <div class="ey">02 of 03</div>
+      <div class="card-title"><em>One service.</em> One credit.</div>
+      <p class="copy">Complete a service, earn a credit. Every new member starts with three bonus credits. Enough to receive before you give. Credits never expire.</p>
     </div>
   </section>
 
-  <!-- 4. STEP 03 -->
-  <section class="slide slide-card" data-title="Step 03">
-    <div class="plate-wrap"><div class="plate blue" style="--rot:-1deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Step 03</div>
-        <div class="plate-big"><em>Spend</em> on what you need.</div>
-        <div class="plate-sub">No direct trade required.</div>
+  <!-- 04 STEP 03 -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate v-blue" style="--rot:-1.2deg;">
+        <div class="plate-inner">
+          <div class="stamp">Step 03</div>
+          <div class="p-big"><em>Spend</em> on what you need.</div>
+          <div class="p-sub">No direct trade required.</div>
+        </div>
       </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">03 of 03</div>
-      <div class="card-year">Browse. <em>Spend.</em> Receive.</div>
-      <p class="card-copy">Spend your credits on someone else's skill. You never have to trade directly. Value flows freely across the community, in whatever order it wants to.</p>
+    </div>
+    <div class="card-text">
+      <div class="ey">03 of 03</div>
+      <div class="card-title">Browse. <em>Spend.</em> Receive.</div>
+      <p class="copy">Spend your credits on someone else's skill. You never have to trade directly. Value flows freely across the community, in whatever order it wants.</p>
     </div>
   </section>
 
-  <!-- 5. TENSION INTRO -->
-  <section class="slide slide-intro" data-title="Tension">
-    <div class="eyebrow">Chapter 02. The tension.</div>
-    <h2 class="title" style="margin-top: 1rem;">There are only<br><em>three options.</em></h2>
-    <p class="intro">When your craft means something, three doors appear. <em>Two of them close.</em> The third is the reason we're building this.</p>
+  <!-- 05 TENSION INTRO -->
+  <section class="slide s-intro">
+    <div class="ey">Chapter 02. The tension.</div>
+    <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">There are only<br><em>three options.</em></h2>
+    <p class="copy serif">When your craft means something, three doors appear. <em>Two of them close.</em> The third is the reason we're building this.</p>
   </section>
 
-  <!-- 6. OPTION I -->
-  <section class="slide slide-card" data-title="Option I" id="tension">
-    <div class="plate-wrap"><div class="plate" style="--rot:-2deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Option I</div>
-        <div class="plate-big">Turn it into<br><em>a business.</em></div>
-        <div class="plate-sub">Admin. KPIs. Midnight emails.</div>
+  <!-- 06 OPTION I -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate" style="--rot:-2deg;">
+        <div class="plate-inner">
+          <div class="stamp">Option I</div>
+          <div class="p-big">Turn it into<br><em>a business.</em></div>
+          <div class="p-sub">Admin. KPIs. Midnight emails.</div>
+        </div>
       </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">01 of 03</div>
-      <div class="card-year">The <em>hustle</em> route.</div>
-      <p class="card-copy">You start charging. Admin kicks in. Clients email at midnight. What you loved becomes a KPI, and the joy erodes quietly until it's gone.</p>
+    </div>
+    <div class="card-text">
+      <div class="ey">01 of 03</div>
+      <div class="card-title">The <em>hustle</em> route.</div>
+      <p class="copy">You start charging. Admin kicks in. Clients email at midnight. What you loved becomes a KPI, and the joy erodes quietly until it's gone.</p>
       <div class="card-verdict">Joy erodes.</div>
     </div>
   </section>
 
-  <!-- 7. OPTION II -->
-  <section class="slide slide-card" data-title="Option II">
-    <div class="plate-wrap"><div class="plate cream" style="--rot:1.5deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Option II</div>
-        <div class="plate-big">Do it<br><em>for free.</em></div>
-        <div class="plate-sub">Generous. Invisible. Unsustainable.</div>
+  <!-- 07 OPTION II -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate v-cream" style="--rot:1.8deg;">
+        <div class="plate-inner">
+          <div class="stamp">Option II</div>
+          <div class="p-big">Do it<br><em>for free.</em></div>
+          <div class="p-sub">Generous. Invisible. Unsustainable.</div>
+        </div>
       </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">02 of 03</div>
-      <div class="card-year">The <em>gift</em> route.</div>
-      <p class="card-copy">Generous, but unsustainable. It feels invisible. You gave your time, your craft, your energy, and walked away with nothing tangible.</p>
+    </div>
+    <div class="card-text">
+      <div class="ey">02 of 03</div>
+      <div class="card-title">The <em>gift</em> route.</div>
+      <p class="copy">Generous, but unsustainable. It feels invisible. You gave your time, your craft, your energy, and walked away with nothing tangible.</p>
       <div class="card-verdict">Feels undervalued.</div>
     </div>
   </section>
 
-  <!-- 8. OPTION III -->
-  <section class="slide slide-card" data-title="Option III">
-    <div class="plate-wrap"><div class="plate dark" style="--rot:-1deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Option III</div>
-        <div class="plate-big"><em>Barterhaus.</em></div>
-        <div class="plate-sub">Credits. Community. Circulation.</div>
-      </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">03 of 03</div>
-      <div class="card-year">The <em>third</em> way.</div>
-      <p class="card-copy">Your craft earns credits. Credits unlock what you need. Value circulates through the community, without a price tag and without the pressure.</p>
-      <div class="card-verdict good">A different unit entirely.</div>
-    </div>
-  </section>
-
-  <!-- 9. WHO -->
-  <section class="slide slide-who" data-title="Who's in" id="who">
-    <div class="eyebrow">Chapter 03. Who's in the Haus.</div>
-    <div class="who-wrap" style="margin-top: 1.5rem;">
-      <div class="who-head">
-        <h2 class="title">Built for people<br><em>who create.</em></h2>
-        <p class="body" style="margin-top: 1rem; font-size: clamp(0.95rem,1.2vw,1.15rem); max-width: 32ch;">Opening with music and art teachers, <em>plus the creatives who orbit them.</em></p>
-      </div>
-      <div class="who-list">
-        <div class="who-row"><span class="n">01</span><span class="t"><em>Music</em> teachers</span><span class="x">Lesson → Photography</span><span class="d">Scales and chord theory. You might love a website, a headshot, a studio flyer.</span></div>
-        <div class="who-row"><span class="n">02</span><span class="t">Visual <em>artists</em></span><span class="x">Illustration → Video</span><span class="d">You paint, illustrate, design. Trade for a video, a tune, a copywriter.</span></div>
-        <div class="who-row"><span class="n">03</span><span class="t"><em>Photo</em>graphers</span><span class="x">Shoot → Copywriting</span><span class="d">A single shoot transforms a portfolio. Receive a lesson, a logo, copy in return.</span></div>
-        <div class="who-row"><span class="n">04</span><span class="t">Movement <em>teachers</em></span><span class="x">Session → Design</span><span class="d">Yoga, dance, martial arts. Let students transform your creative world in return.</span></div>
-        <div class="who-row"><span class="n">05</span><span class="t">Writers &amp; <em>poets</em></span><span class="x">Copy → Music lesson</span><span class="d">Trade copy, editing, storytelling for skills you've always wanted to learn.</span></div>
-        <div class="who-row"><span class="n">06</span><span class="t"><em>Film</em>makers</span><span class="x">Edit → Composition</span><span class="d">You make images that move people. The Haus needs a reel, a short, a memory film.</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 10. CREDITS -->
-  <section class="slide slide-credits" data-title="Credits" id="credits">
-    <div class="eyebrow">Chapter 04. The credit system.</div>
-    <div class="cred-wrap" style="margin-top: 1rem;">
-      <div class="cred-left">
-        <div class="cred-head">
-          <h2 class="title">You don't have to<br><em>trade directly.</em></h2>
-          <p class="intro">Classic barter fails because you need someone who wants what you offer, right now. <em>Haus credits break that deadlock.</em></p>
+  <!-- 08 OPTION III -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate v-dark" style="--rot:-1.2deg;">
+        <div class="plate-inner">
+          <div class="stamp">Option III</div>
+          <div class="p-big"><em>Barterhaus.</em></div>
+          <div class="p-sub">Credits. Community. Circulation.</div>
         </div>
-        <div class="node-wrap" aria-hidden="true">
-          <svg class="node-svg" viewBox="0 0 400 340" preserveAspectRatio="none">
-            <path d="M110,70 C200,30 300,55 330,85"/>
-            <path d="M330,85 C360,170 320,245 300,265"/>
-            <path d="M300,265 C220,300 140,290 110,270"/>
-            <path d="M110,270 C50,200 60,115 110,70"/>
-            <path d="M110,70 L300,265"/>
-            <path d="M330,85 L110,270"/>
+      </div>
+    </div>
+    <div class="card-text">
+      <div class="ey">03 of 03</div>
+      <div class="card-title">The <em>third</em> way.</div>
+      <p class="copy">Your craft earns credits. Credits unlock what you need. Value circulates through the community, without a price tag and without the pressure.</p>
+      <div class="card-verdict pos">A different unit entirely.</div>
+    </div>
+  </section>
+
+  <!-- 09 WHO -->
+  <section class="slide s-who scrollable">
+    <div class="ey">Chapter 03. Who's in the Haus.</div>
+    <h2 class="head" style="font-size:clamp(2rem,5vw,4.5rem);">Built for people<br><em>who create.</em></h2>
+    <div class="who-grid">
+      <div>
+        <p class="who-intro" style="margin-top:0.5rem;">Opening with music and art teachers, <em>plus the creatives who orbit them.</em> Photographers, filmmakers, writers, designers, movement teachers.</p>
+      </div>
+      <div class="who-table">
+        <div class="wr"><span class="rn">01</span><span class="rt"><em>Music</em> teachers</span><span class="rd">Scales and chord theory. You might love a website, a headshot, a studio flyer.</span><span class="rx">Lesson to Photography</span></div>
+        <div class="wr"><span class="rn">02</span><span class="rt">Visual <em>artists</em></span><span class="rd">You paint, illustrate, design. Trade for a video, a tune, a copywriter.</span><span class="rx">Illustration to Video</span></div>
+        <div class="wr"><span class="rn">03</span><span class="rt"><em>Photo</em>graphers</span><span class="rd">A single shoot transforms a portfolio. Receive a lesson, a logo, copy in return.</span><span class="rx">Shoot to Copywriting</span></div>
+        <div class="wr"><span class="rn">04</span><span class="rt">Movement <em>teachers</em></span><span class="rd">Yoga, dance, martial arts. Let students transform your creative world in return.</span><span class="rx">Session to Design</span></div>
+        <div class="wr"><span class="rn">05</span><span class="rt">Writers &amp; <em>poets</em></span><span class="rd">Trade copy, editing, storytelling for skills you've always wanted to learn.</span><span class="rx">Copy to Music lesson</span></div>
+        <div class="wr"><span class="rn">06</span><span class="rt"><em>Film</em>makers</span><span class="rd">You make images that move people. The Haus needs a reel, a short, a memory film.</span><span class="rx">Edit to Composition</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 CREDITS -->
+  <section class="slide s-cred scrollable">
+    <div class="ey">Chapter 04. The credit system.</div>
+    <h2 class="head">You don't have to<br><em>trade directly.</em></h2>
+    <div class="cred-grid">
+      <div class="cred-left">
+        <p class="copy serif">Classic barter fails because you need someone who wants what you offer, right now. <em>Haus credits break that deadlock.</em></p>
+        <div class="node-dia" aria-hidden="true">
+          <svg viewBox="0 0 300 260" preserveAspectRatio="none">
+            <path d="M80,55 C160,25 230,42 252,65"/>
+            <path d="M252,65 C275,130 248,188 230,204"/>
+            <path d="M230,204 C170,228 110,220 82,204"/>
+            <path d="M82,204 C38,155 44,90 80,55"/>
+            <path d="M80,55 L230,204" stroke-dasharray="2 8"/>
+            <path d="M252,65 L82,204" stroke-dasharray="2 8"/>
           </svg>
-          <div class="node n1"><strong>Priya</strong><span>Piano</span></div>
-          <div class="node n2"><strong>Marcus</strong><span>Design</span></div>
-          <div class="node n3"><strong>Jia Li</strong><span>Photo</span></div>
-          <div class="node n4"><strong>Rafi</strong><span>Film</span></div>
+          <div class="nd na"><b>Priya</b><small>Piano</small></div>
+          <div class="nd nb"><b>Marcus</b><small>Design</small></div>
+          <div class="nd nc"><b>Jia Li</b><small>Photo</small></div>
+          <div class="nd nd_"><b>Rafi</b><small>Film</small></div>
         </div>
       </div>
       <div class="cred-rules">
-        <div class="cred-item">
-          <div class="yr">Rule 01.</div>
-          <h4>One credit. One meaningful service.</h4>
-          <p>An hour of teaching, a delivered logo, a photography session. Community guidelines keep it honest.</p>
+        <div class="cr"><div class="cr-num">Rule 01.</div><h4>One credit. One meaningful service.</h4><p>An hour of teaching, a delivered logo, a photography session. Community guidelines keep it honest.</p></div>
+        <div class="cr"><div class="cr-num">Rule 02.</div><h4>Credits never expire.</h4><p>No pressure to spend within a window. Give when you can, receive when you need.</p></div>
+        <div class="cr"><div class="cr-num">Rule 03.</div><h4>No cash out. Ever.</h4><p>Credits are community tokens. The moment we attach a cash value, it becomes work. That's not what this is.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 PROMISE INTRO -->
+  <section class="slide s-intro">
+    <div class="ey">Chapter 05. The Haus promise.</div>
+    <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">What we will<br><em>never</em> do.</h2>
+    <p class="copy serif">Product principles are easier to defend than product features. <em>These are ours.</em> Six lines in the sand.</p>
+  </section>
+
+  <!-- 12 PROMISE 01+02 -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate" style="--rot:-1.5deg;">
+        <div class="plate-inner">
+          <div class="stamp">Promises 01 + 02</div>
+          <div class="p-big">Never show <em>cash</em> equivalents.</div>
+          <div class="p-sub">Credits never leave the Haus.</div>
         </div>
-        <div class="cred-item">
-          <div class="yr">Rule 02.</div>
-          <h4>Credits never expire.</h4>
-          <p>No pressure to spend within a window. Give when you can, receive when you need.</p>
+      </div>
+    </div>
+    <div class="card-text">
+      <div class="ey">01 + 02 of 06</div>
+      <div class="card-title">Never a <em>price tag.</em></div>
+      <p class="copy">We will never display "your hour is worth $X". The moment we do, this becomes a job. Credits are a different unit entirely, and they stay that way.</p>
+      <p class="copy" style="margin-top:0.4rem;"><b>Promise 02.</b> No cash out. No external transfers. Credits circulate inside the Haus, nowhere else.</p>
+    </div>
+  </section>
+
+  <!-- 13 PROMISE 03+04 -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate v-red" style="--rot:1.2deg;">
+        <div class="plate-inner">
+          <div class="stamp">Promises 03 + 04</div>
+          <div class="p-big">Never <em>punish</em><br>for reviews.</div>
+          <div class="p-sub">Disputes always resolved.</div>
         </div>
-        <div class="cred-item">
-          <div class="yr">Rule 03.</div>
-          <h4>No cash out. Ever.</h4>
-          <p>Credits are community tokens. Attach a cash value and it becomes work. That's not what this is.</p>
+      </div>
+    </div>
+    <div class="card-text">
+      <div class="ey">03 + 04 of 06</div>
+      <div class="card-title">No <em>algorithmic</em> rent.</div>
+      <p class="copy">This isn't your livelihood. A low rating here doesn't threaten your rent. Do good work because you care, not because an algorithm penalises you.</p>
+      <p class="copy" style="margin-top:0.4rem;"><b>Promise 04.</b> If something goes wrong, our team steps in, listens, and compensates the affected party in credits.</p>
+    </div>
+  </section>
+
+  <!-- 14 PROMISE 05+06 -->
+  <section class="slide s-card">
+    <div class="plate-wrap">
+      <div class="plate v-cream" style="--rot:-1.2deg;">
+        <div class="plate-inner">
+          <div class="stamp">Promises 05 + 06</div>
+          <div class="p-big">Never forget <em>local.</em></div>
+          <div class="p-sub">Never price your passion.</div>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- 11. PROMISE INTRO -->
-  <section class="slide slide-intro" data-title="Promise" id="promise">
-    <div class="eyebrow">Chapter 05. The Haus promise.</div>
-    <h2 class="title" style="margin-top: 1rem;">What we will<br><em>never</em> do.</h2>
-    <p class="intro">Product principles are easier to defend than product features. <em>These are ours.</em> Six lines in the sand.</p>
-  </section>
-
-  <!-- 12. PROMISE 01 & 02 -->
-  <section class="slide slide-card" data-title="Promise 01/02">
-    <div class="plate-wrap"><div class="plate" style="--rot:-1.5deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Promise 01</div>
-        <div class="plate-big">Never show<br><em>cash</em> equivalents.</div>
-        <div class="plate-sub">Credits are credits.</div>
-      </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">01 &amp; 02 of 06</div>
-      <div class="card-year">Never a <em>price tag.</em></div>
-      <p class="card-copy">We will never display "your hour is worth $X". The moment we do, this becomes a job. Credits are a different unit entirely, and they stay that way.</p>
-      <p class="card-copy" style="margin-top: 0.5rem;"><strong>Promise 02.</strong> Credits never leave the Haus. No cash out. No transfer to external wallets.</p>
+    <div class="card-text">
+      <div class="ey">05 + 06 of 06</div>
+      <div class="card-title">Small, <em>rooted,</em> honest.</div>
+      <p class="copy">Singapore first because we want real relationships, not user counts. The Haus stays rooted in community.</p>
+      <p class="copy" style="margin-top:0.4rem;"><b>Promise 06.</b> You define the terms, the unit, the pace. Your craft, your rules. We never price your passion.</p>
     </div>
   </section>
 
-  <!-- 13. PROMISE 03 & 04 -->
-  <section class="slide slide-card" data-title="Promise 03/04">
-    <div class="plate-wrap"><div class="plate red" style="--rot:1.2deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Promise 03</div>
-        <div class="plate-big">Never <em>punish</em><br>for reviews.</div>
-        <div class="plate-sub">Your rent isn't on the line.</div>
-      </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">03 &amp; 04 of 06</div>
-      <div class="card-year">No <em>algorithmic</em> rent.</div>
-      <p class="card-copy">This isn't your livelihood. A low rating here doesn't threaten your rent. Do good work because you care, not because an algorithm penalises you.</p>
-      <p class="card-copy" style="margin-top: 0.5rem;"><strong>Promise 04.</strong> Disputes never go unresolved. Our team steps in, listens, and compensates in credits.</p>
-    </div>
-  </section>
-
-  <!-- 14. PROMISE 05 & 06 -->
-  <section class="slide slide-card" data-title="Promise 05/06">
-    <div class="plate-wrap"><div class="plate cream" style="--rot:-1.2deg;">
-      <div class="plate-inner">
-        <div class="plate-stamp">Promise 05 &amp; 06</div>
-        <div class="plate-big">Never forget<br><em>local.</em></div>
-        <div class="plate-sub">Never price your passion.</div>
-      </div>
-    </div></div>
-    <div class="card-meta">
-      <div class="eyebrow">05 &amp; 06 of 06</div>
-      <div class="card-year">Small, <em>rooted,</em> honest.</div>
-      <p class="card-copy">Singapore first because we want real relationships, not user counts. The Haus stays rooted in community.</p>
-      <p class="card-copy" style="margin-top: 0.5rem;"><strong>Promise 06.</strong> You define the terms, the unit, the pace. Your craft, your rules. We never price your passion.</p>
-    </div>
-  </section>
-
-  <!-- 15. WAITLIST -->
-  <section class="slide slide-wait" data-title="Join" id="join">
-    <div class="eyebrow">Early access. Singapore. 2025.</div>
-    <h2 class="wait-title" style="margin-top: 2rem;">
-      <span>Be among</span><br>
-      <span>the first</span><br>
-      <span><em>in the Haus.</em></span>
-    </h2>
+  <!-- 15 WAITLIST -->
+  <section class="slide s-wait">
+    <div class="ey">Early access. Singapore. 2025.</div>
+    <h2 class="wait-hl">Be among<br>the first<br><em>in the Haus.</em></h2>
     <div class="wait-foot">
-      <p class="wait-copy">Opening to music and art teachers first. Three bonus credits on launch. <em>No spam, ever.</em></p>
-      <div class="wait-form">
-        <div class="mini-form-row" id="wait-form">
-          <input type="email" id="wait-email" placeholder="your@email.com" aria-label="Your email" />
-          <button onclick="handleSignup('wait-email','wait-ok','wait-form')">Claim my spot</button>
+      <p class="wait-sub">Opening to music and art teachers first. Three bonus credits on launch. <em>No spam, ever.</em></p>
+      <div class="signup-wrap">
+        <div class="signup-row" id="wf">
+          <input type="email" id="w-em" placeholder="your@email.com" aria-label="Email"/>
+          <button onclick="signup('w-em','w-ok','wf')">Claim my spot</button>
         </div>
-        <div class="mini-ok" id="wait-ok">✦ You're in. We'll reach out when doors open.</div>
-        <p class="mini-note">We open when the first hundred are in.</p>
+        <div class="signup-ok" id="w-ok">✦ You're in. We'll reach out when doors open.</div>
+        <p class="signup-note">We open when the first hundred are in.</p>
       </div>
     </div>
   </section>
 
-  <!-- 16. CLOSE -->
-  <section class="slide slide-close" data-title="Signal 001">
-    <div class="eyebrow">End of transmission.</div>
-    <h2 class="close-title" style="margin-top: 2rem;">
-      Barter<em>haus.</em><br>
-      A new <em>signal</em> for<br>people who create.
-    </h2>
+  <!-- 16 CLOSE -->
+  <section class="slide s-close">
+    <div class="ey">End of transmission.</div>
+    <h2 class="close-hl">Barter<em>haus.</em><br>A new <em>signal</em><br>for people<br>who create.</h2>
     <div class="close-meta">
       <span>SG. 2025. Signal 001.</span>
       <a href="mailto:hello@barterhaus.sg">hello@barterhaus.sg</a>
-      <a href="#0" onclick="goto(event, 0)">Back to the top ↑</a>
+      <a href="#" onclick="goto(event,0)">Back to the start</a>
     </div>
   </section>
 
 </main>
 
 <script>
-  // Preloader
-  window.addEventListener('load', () => {
-    setTimeout(() => document.getElementById('preloader').classList.add('hidden'), 800);
+  /* ── Pixel cursor ── */
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
   });
 
+  /* ── Preloader ── */
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('preloader').classList.add('hidden'), 900);
+  });
+
+  /* ── Rail + state ── */
   const rail = document.getElementById('rail');
   const slides = rail.querySelectorAll('.slide');
-  const total = slides.length;
-  document.getElementById('total').textContent = String(total).padStart(2, '0');
-
-  // Vertical wheel ⇒ horizontal scroll. Accumulate deltas and apply on rAF
-  // for a buttery, continuous feel.
-  let targetX = rail.scrollLeft;
-  let rafPending = false;
-  const EASE = 0.18;              // smoothing factor (0..1, higher = snappier)
-  const WHEEL_MULT = 1.15;        // wheel-to-scroll multiplier
-
-  function loopScroll() {
-    const dx = targetX - rail.scrollLeft;
-    if (Math.abs(dx) < 0.5) {
-      rail.scrollLeft = targetX;
-      rafPending = false;
-      return;
-    }
-    rail.scrollLeft += dx * EASE;
-    requestAnimationFrame(loopScroll);
-  }
-  function kick() {
-    if (!rafPending) { rafPending = true; requestAnimationFrame(loopScroll); }
-  }
-
-  rail.addEventListener('wheel', (e) => {
-    // Pass-through when the user is scrolling horizontally (trackpad swipe).
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-    e.preventDefault();
-    const maxX = rail.scrollWidth - rail.clientWidth;
-    targetX = Math.max(0, Math.min(maxX, targetX + e.deltaY * WHEEL_MULT));
-    kick();
-  }, { passive: false });
-
-  // Touch / trackpad two-finger updates targetX so our loop doesn't fight them.
-  rail.addEventListener('scroll', () => {
-    if (!rafPending) targetX = rail.scrollLeft;
-  }, { passive: true });
-
-  // Track active slide for progress + counter
-  const nowEl = document.getElementById('now');
-  const progEl = document.getElementById('prog');
-  const prevBtn = document.getElementById('prev');
-  const nextBtn = document.getElementById('next');
-  let current = 0;
+  const N = slides.length;
+  const nowEl  = document.getElementById('now');
+  const totEl  = document.getElementById('tot');
+  const prog   = document.getElementById('prog');
+  const btnP   = document.getElementById('btn-prev');
+  const btnN   = document.getElementById('btn-next');
+  totEl.textContent = String(N).padStart(2,'0');
+  let cur_i = 0;
+  let targetX = 0;
+  let rafId   = null;
 
   function update() {
     const w = window.innerWidth;
-    const idx = Math.round(rail.scrollLeft / w);
-    current = Math.max(0, Math.min(total - 1, idx));
-    nowEl.textContent = String(current + 1).padStart(2, '0');
-    progEl.style.transform = `scaleX(${(current) / (total - 1)})`;
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === total - 1;
-    // chrome nav active state
-    document.querySelectorAll('.chrome-meta a, .overlay a').forEach(a => {
-      const t = Number(a.dataset.i ?? NaN);
-      if (!Number.isNaN(t)) a.classList.toggle('active', t === current);
-    });
+    cur_i = Math.max(0, Math.min(N-1, Math.round(rail.scrollLeft / w)));
+    nowEl.textContent  = String(cur_i + 1).padStart(2, '0');
+    prog.style.transform = `scaleX(${N > 1 ? cur_i / (N-1) : 0})`;
+    btnP.disabled = cur_i === 0;
+    btnN.disabled = cur_i === N-1;
   }
-  rail.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
+  rail.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', () => { targetX = rail.scrollLeft; update(); });
   update();
 
-  function goto(ev, i) {
-    if (ev) ev.preventDefault();
-    rail.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
+  /* ── Smooth wheel-to-horizontal ── */
+  function loopEase() {
+    const dx = targetX - rail.scrollLeft;
+    if (Math.abs(dx) < 0.6) { rail.scrollLeft = targetX; rafId = null; return; }
+    rail.scrollLeft += dx * 0.16;
+    rafId = requestAnimationFrame(loopEase);
+  }
+  rail.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // native h-scroll wins
+    e.preventDefault();
+    const maxX = rail.scrollWidth - rail.clientWidth;
+    targetX = Math.max(0, Math.min(maxX, targetX + e.deltaY * 1.1));
+    if (!rafId) rafId = requestAnimationFrame(loopEase);
+  }, {passive:false});
+  rail.addEventListener('scroll', () => { if (!rafId) targetX = rail.scrollLeft; }, {passive:true});
+
+  /* ── Navigation ── */
+  function goto(e, i) {
+    if (e) e.preventDefault();
+    targetX = i * window.innerWidth;
+    if (!rafId) rafId = requestAnimationFrame(loopEase);
     closeNav();
   }
-  function step(d) {
-    goto(null, Math.max(0, Math.min(total - 1, current + d)));
-  }
+  function step(d) { goto(null, Math.max(0, Math.min(N-1, cur_i + d))); }
 
-  // Keyboard
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { step(1); e.preventDefault(); }
-    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { step(-1); e.preventDefault(); }
-    else if (e.key === 'Home') { goto(null, 0); }
-    else if (e.key === 'End') { goto(null, total - 1); }
-    else if (e.key === 'Escape') { closeNav(); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { step(1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { step(-1); e.preventDefault(); }
+    else if (e.key === 'Home') { goto(null,0); }
+    else if (e.key === 'End')  { goto(null,N-1); }
+    else if (e.key === 'Escape') closeNav();
   });
 
-  // Nav overlay
+  /* ── Overlay ── */
   function openNav()  { document.getElementById('overlay').classList.add('open'); }
   function closeNav() { document.getElementById('overlay').classList.remove('open'); }
 
-  // Signup
-  function handleSignup(inputId, okId, formId) {
-    const input = document.getElementById(inputId);
-    const ok = document.getElementById(okId);
-    const form = document.getElementById(formId);
-    const v = input.value.trim();
-    if (!v || !v.includes('@')) { input.focus(); return; }
-    if (form) form.style.display = 'none';
-    ok.style.display = 'block';
-    console.log('Signup:', v);
+  /* ── Signup ── */
+  function signup(inputId, okId, formId) {
+    const inp = document.getElementById(inputId);
+    const ok  = document.getElementById(okId);
+    const row = document.getElementById(formId);
+    if (!inp.value.trim().includes('@')) { inp.focus(); return; }
+    row.style.display = 'none';
+    ok.style.display  = 'block';
+    console.log('Signup:', inp.value.trim());
   }
 </script>
 </body>
