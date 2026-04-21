@@ -325,6 +325,8 @@
     .s-intro { justify-content: center; gap: clamp(1rem, 2vw, 1.5rem); }
     .s-intro .head { font-size: clamp(2.8rem, 9vw, 9rem); max-width: 16ch; }
     .s-intro .copy.serif { max-width: 42ch; }
+    /* Narrower intro slides so the next card feels immediately adjacent */
+    .s-intro.compact { flex: 0 0 clamp(320px, 52vw, 700px); width: clamp(320px, 52vw, 700px); }
 
     /* ═══════════════════════════════════════════════════════
        SLIDE — CARD (plate left, text right)
@@ -723,7 +725,7 @@
   </section>
 
   <!-- 05 TENSION INTRO -->
-  <section class="slide s-intro">
+  <section class="slide s-intro compact">
     <div class="ey">Chapter 02. The tension.</div>
     <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">There are only<br><em>three options.</em></h2>
     <p class="copy serif">When your craft means something, three doors appear. <em>Two of them close.</em> The third is the reason we're building this.</p>
