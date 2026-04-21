@@ -348,11 +348,11 @@
     /* ═══════════════════════════════════════════════════════
        SLIDE — CHAPTER INTRO
        ═══════════════════════════════════════════════════════ */
-    .s-intro { justify-content: center; gap: clamp(0.9rem, 1.6vw, 1.3rem); max-width: 58ch; }
-    .s-intro .head { font-size: clamp(2.4rem, 7.5vw, 7.5rem); max-width: 14ch; }
-    .s-intro .copy.serif { max-width: 40ch; }
+    .s-intro { justify-content: center; gap: clamp(0.9rem, 1.6vw, 1.3rem); }
+    .s-intro .head { font-size: clamp(2.2rem, 6vw, 5.6rem); max-width: 18ch; }
+    .s-intro .copy.serif { max-width: 44ch; }
     /* Narrower intro slides so the next card feels immediately adjacent */
-    .s-intro.compact { flex: 0 0 clamp(320px, 46vw, 620px); width: clamp(320px, 46vw, 620px); padding-right: clamp(1rem, 2vw, 2rem); }
+    .s-intro.compact { flex: 0 0 clamp(420px, 62vw, 860px); width: clamp(420px, 62vw, 860px); padding-right: clamp(1.5rem, 3vw, 3rem); }
 
     /* ═══════════════════════════════════════════════════════
        SLIDE — CARD (plate left, text right)
@@ -360,18 +360,24 @@
     .s-card {
       display: flex;
       align-items: center;
-      gap: clamp(1.5rem, 4vw, 4rem);
+      gap: clamp(1.5rem, 3.2vw, 3.5rem);
       justify-content: flex-start;
-      padding-left: clamp(1rem, 3vw, 3rem);
+      flex: 0 0 clamp(560px, 72vw, 1040px);
+      width: clamp(560px, 72vw, 1040px);
+      padding-left: clamp(1rem, 2.5vw, 2.5rem);
+      padding-right: clamp(1rem, 2.5vw, 2.5rem);
     }
-    /* Mobile: stack vertically, reset padding */
+    /* Mobile: stack vertically, reset padding, full width */
     @media (max-width: 859px) {
       .s-card {
+        flex: none;
+        width: 100%;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
         gap: 1.4rem;
         padding-left: var(--gutter);
+        padding-right: var(--gutter);
       }
     }
 
@@ -998,8 +1004,10 @@
       slides.forEach((s,i) => { if (s.offsetTop <= y) best = i; });
       cur_i = best;
     } else {
-      const w = window.innerWidth;
-      cur_i = Math.max(0, Math.min(N-1, Math.round(rail.scrollLeft / w)));
+      const x = rail.scrollLeft + window.innerWidth * 0.3;
+      let best = 0;
+      slides.forEach((s,i) => { if (s.offsetLeft <= x) best = i; });
+      cur_i = best;
     }
     nowEl.textContent  = String(cur_i + 1).padStart(2, '0');
     prog.style.transform = `scaleX(${N > 1 ? cur_i / (N-1) : 0})`;
@@ -1035,7 +1043,7 @@
     if (isMobile()) {
       slides[i].scrollIntoView({behavior:'smooth', block:'start'});
     } else {
-      targetX = i * window.innerWidth;
+      targetX = slides[i].offsetLeft;
       if (!rafId) rafId = requestAnimationFrame(loopEase);
     }
     closeNav();
