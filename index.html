@@ -196,7 +196,7 @@
     }
 
     /* ═══════════════════════════════════════════════════════
-       RAIL — the horizontal scroll container
+       RAIL — the horizontal scroll container (desktop)
        ═══════════════════════════════════════════════════════ */
     #rail {
       display: flex;
@@ -214,7 +214,7 @@
       flex: 0 0 100vw;
       width: 100vw;
       height: 100%;
-      padding: clamp(1.5rem, 3vw, 2.5rem) var(--gutter);
+      padding: clamp(1.25rem, 2.6vw, 2.25rem) var(--gutter);
       display: flex; flex-direction: column;
       overflow: hidden;
       position: relative;
@@ -222,6 +222,32 @@
 
     /* Slides that can scroll internally */
     .slide.scrollable { overflow-y: auto; overflow-x: hidden; }
+
+    /* ═══════════════════════════════════════════════════════
+       MOBILE — switch to normal vertical scroll
+       ═══════════════════════════════════════════════════════ */
+    @media (max-width: 859px) {
+      html, body { overflow: auto; height: auto; }
+      #rail {
+        display: block; position: static;
+        overflow: visible; height: auto;
+        padding-top: var(--cht);
+        padding-bottom: var(--chb);
+      }
+      .slide {
+        flex: none;
+        width: 100%;
+        height: auto; min-height: auto;
+        overflow: visible;
+        padding: clamp(2.5rem, 8vw, 4rem) var(--gutter);
+        border-bottom: 1px solid var(--rule);
+      }
+      .slide:last-child { border-bottom: none; }
+      .slide.scrollable { overflow: visible; }
+      #bchrome .prog-track { max-width: 180px; }
+      #bchrome .scroll-hint { display: none; }
+      .s-intro.compact { flex: none; width: 100%; }
+    }
 
     /* ── Eyebrow label ── */
     .ey {
@@ -265,7 +291,7 @@
 
     .hero-hl {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(2.8rem, 11vw, 12rem);
+      font-size: clamp(2.6rem, 9.5vw, 10rem);
       line-height: 0.93;
       letter-spacing: -0.04em;
       font-variation-settings: "opsz" 144;
@@ -322,11 +348,11 @@
     /* ═══════════════════════════════════════════════════════
        SLIDE — CHAPTER INTRO
        ═══════════════════════════════════════════════════════ */
-    .s-intro { justify-content: center; gap: clamp(1rem, 2vw, 1.5rem); }
-    .s-intro .head { font-size: clamp(2.8rem, 9vw, 9rem); max-width: 16ch; }
-    .s-intro .copy.serif { max-width: 42ch; }
+    .s-intro { justify-content: center; gap: clamp(0.9rem, 1.6vw, 1.3rem); max-width: 58ch; }
+    .s-intro .head { font-size: clamp(2.4rem, 7.5vw, 7.5rem); max-width: 14ch; }
+    .s-intro .copy.serif { max-width: 40ch; }
     /* Narrower intro slides so the next card feels immediately adjacent */
-    .s-intro.compact { flex: 0 0 clamp(320px, 52vw, 700px); width: clamp(320px, 52vw, 700px); }
+    .s-intro.compact { flex: 0 0 clamp(320px, 46vw, 620px); width: clamp(320px, 46vw, 620px); padding-right: clamp(1rem, 2vw, 2rem); }
 
     /* ═══════════════════════════════════════════════════════
        SLIDE — CARD (plate left, text right)
@@ -334,20 +360,27 @@
     .s-card {
       display: flex;
       align-items: center;
-      gap: clamp(2rem, 5vw, 5rem);
-      justify-content: center;
+      gap: clamp(1.5rem, 4vw, 4rem);
+      justify-content: flex-start;
+      padding-left: clamp(1rem, 3vw, 3rem);
     }
-    /* Mobile: stack vertically */
-    @media (max-width: 699px) {
-      .s-card { flex-direction: column; justify-content: center; gap: 1.2rem; }
+    /* Mobile: stack vertically, reset padding */
+    @media (max-width: 859px) {
+      .s-card {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 1.4rem;
+        padding-left: var(--gutter);
+      }
     }
 
     .plate-wrap {
       flex: 0 0 auto;
-      width: min(340px, 42vw, 48vh);
+      width: min(300px, 34vw, 44vh);
     }
-    @media (max-width: 699px) {
-      .plate-wrap { width: min(220px, 55vw, 32vh); }
+    @media (max-width: 859px) {
+      .plate-wrap { width: min(240px, 62vw); align-self: center; }
     }
 
     .plate {
@@ -540,7 +573,7 @@
     }
     .wait-hl {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(2.5rem, 10vw, 10rem);
+      font-size: clamp(2.4rem, 8.5vw, 9rem);
       line-height: 0.93; letter-spacing: -0.04em;
       font-variation-settings: "opsz" 144;
       flex-shrink: 0;
@@ -666,7 +699,7 @@
   <!-- 01 HOW INTRO -->
   <section class="slide s-intro compact">
     <div class="ey">Chapter 01. How it works.</div>
-    <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">Simple enough to explain<br><em>at a dinner table.</em></h2>
+    <h2 class="head" style="font-size:clamp(2.4rem,7.5vw,7.5rem);max-width:14ch;">Simple enough to explain<br><em>at a dinner table.</em></h2>
     <p class="copy serif">Three steps. No jargon. <em>If it takes more than a minute to describe, we haven't built it right.</em></p>
   </section>
 
@@ -727,7 +760,7 @@
   <!-- 05 TENSION INTRO -->
   <section class="slide s-intro compact">
     <div class="ey">Chapter 02. The tension.</div>
-    <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">There are only<br><em>three options.</em></h2>
+    <h2 class="head" style="font-size:clamp(2.4rem,7.5vw,7.5rem);max-width:14ch;">There are only<br><em>three options.</em></h2>
     <p class="copy serif">When your craft means something, three doors appear. <em>Two of them close.</em> The third is the reason we're building this.</p>
   </section>
 
@@ -838,9 +871,9 @@
   </section>
 
   <!-- 11 PROMISE INTRO -->
-  <section class="slide s-intro">
+  <section class="slide s-intro compact">
     <div class="ey">Chapter 05. The Haus promise.</div>
-    <h2 class="head" style="font-size:clamp(2.8rem,9vw,9rem);max-width:16ch;">What we will<br><em>never</em> do.</h2>
+    <h2 class="head" style="font-size:clamp(2.4rem,7.5vw,7.5rem);max-width:14ch;">What we will<br><em>never</em> do.</h2>
     <p class="copy serif">Product principles are easier to defend than product features. <em>These are ours.</em> Six lines in the sand.</p>
   </section>
 
@@ -959,14 +992,22 @@
   let rafId   = null;
 
   function update() {
-    const w = window.innerWidth;
-    cur_i = Math.max(0, Math.min(N-1, Math.round(rail.scrollLeft / w)));
+    if (window.matchMedia('(max-width: 859px)').matches) {
+      const y = window.scrollY + window.innerHeight * 0.4;
+      let best = 0;
+      slides.forEach((s,i) => { if (s.offsetTop <= y) best = i; });
+      cur_i = best;
+    } else {
+      const w = window.innerWidth;
+      cur_i = Math.max(0, Math.min(N-1, Math.round(rail.scrollLeft / w)));
+    }
     nowEl.textContent  = String(cur_i + 1).padStart(2, '0');
     prog.style.transform = `scaleX(${N > 1 ? cur_i / (N-1) : 0})`;
     btnP.disabled = cur_i === 0;
     btnN.disabled = cur_i === N-1;
   }
   rail.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('scroll', update, {passive:true});
   window.addEventListener('resize', () => { targetX = rail.scrollLeft; update(); });
   update();
 
@@ -977,7 +1018,9 @@
     rail.scrollLeft += dx * 0.16;
     rafId = requestAnimationFrame(loopEase);
   }
+  const isMobile = () => window.matchMedia('(max-width: 859px)').matches;
   rail.addEventListener('wheel', e => {
+    if (isMobile()) return; // native vertical scroll on mobile
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // native h-scroll wins
     e.preventDefault();
     const maxX = rail.scrollWidth - rail.clientWidth;
@@ -989,8 +1032,12 @@
   /* ── Navigation ── */
   function goto(e, i) {
     if (e) e.preventDefault();
-    targetX = i * window.innerWidth;
-    if (!rafId) rafId = requestAnimationFrame(loopEase);
+    if (isMobile()) {
+      slides[i].scrollIntoView({behavior:'smooth', block:'start'});
+    } else {
+      targetX = i * window.innerWidth;
+      if (!rafId) rafId = requestAnimationFrame(loopEase);
+    }
     closeNav();
   }
   function step(d) { goto(null, Math.max(0, Math.min(N-1, cur_i + d))); }
