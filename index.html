@@ -390,10 +390,10 @@
     }
 
     .plate {
-      aspect-ratio: 1 / 1.08;
+      aspect-ratio: 1 / 1;
       background: var(--paper2);
       border: 1px solid var(--rule);
-      padding: clamp(1.2rem, 3vw, 2rem);
+      padding: clamp(1rem, 2vw, 1.6rem);
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 16px 32px -14px rgba(0,0,0,0.22);
       transform: rotate(var(--rot, -1.5deg));
@@ -401,25 +401,27 @@
     }
     .plate:hover { transform: rotate(0deg) translateY(-5px); }
 
-    .plate-inner { text-align: center; }
+    .plate-inner { text-align: center; width: 100%; }
     .stamp {
       display: inline-block; padding: 0.2rem 0.55rem;
       background: var(--ink); color: var(--paper);
-      font-family: var(--sans); font-size: 10px; font-weight: 500;
+      font-family: var(--sans); font-size: 9.5px; font-weight: 500;
       letter-spacing: 0.18em; text-transform: uppercase;
-      margin-bottom: clamp(0.8rem, 2vw, 1.4rem);
+      margin-bottom: clamp(0.7rem, 1.6vw, 1.1rem);
     }
     .p-big {
       font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.5rem, 3.8vw, 3.2rem);
-      line-height: 1.0; letter-spacing: -0.02em;
+      font-size: clamp(1.05rem, 2.1vw, 1.7rem);
+      line-height: 1.05; letter-spacing: -0.02em;
       color: var(--ink);
+      hyphens: auto;
     }
     .p-big em { font-style: italic; font-weight: 300; }
     .p-sub {
       font-family: var(--serif); font-style: italic;
-      font-size: clamp(0.82rem, 0.9vw, 1rem);
-      color: var(--muted); margin-top: clamp(0.5rem, 1.2vw, 0.9rem);
+      font-size: clamp(0.75rem, 0.85vw, 0.92rem);
+      color: var(--muted); margin-top: clamp(0.45rem, 1vw, 0.75rem);
+      line-height: 1.3;
     }
 
     /* Plate colour variants */
@@ -524,33 +526,41 @@
 
     .cred-left { display: flex; flex-direction: column; gap: 1.2rem; }
 
-    .node-dia {
+    .flow-dia {
       position: relative;
       width: 100%;
-      max-width: min(300px, 36vh);
-      aspect-ratio: 1.15;
+      max-width: min(360px, 44vh);
+      aspect-ratio: 1;
+      margin: 0 auto;
     }
-    @media (max-width: 859px) { .node-dia { max-width: min(240px, 28vh); } }
-    .node-dia svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .node-dia svg path { stroke: var(--rule); stroke-width: 1.5; fill: none; stroke-dasharray: 3 6; }
-
-    .nd {
+    @media (max-width: 859px) { .flow-dia { max-width: min(300px, 60vw); } }
+    .flow-dia svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+    .flow-dia .arc { stroke: var(--ink); stroke-width: 1.2; fill: none; }
+    .flow-dia .arc-lbl {
+      font-family: var(--serif); font-style: italic; font-size: 11.5px;
+      fill: var(--ink);
+    }
+    .flow-dia .arc-credit {
+      font-family: var(--sans); font-size: 9px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; fill: var(--accent);
+    }
+    .flow-node {
       position: absolute;
-      width: clamp(70px, 11vw, 105px); aspect-ratio: 1;
+      width: 26%; aspect-ratio: 1;
       border-radius: 50%; border: 1px solid var(--ink);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      text-align: center; padding: 0.4rem;
+      text-align: center; padding: 0.3rem;
       background: var(--paper2);
     }
-    .nd b { font-family: var(--serif); font-style: italic; font-size: clamp(0.8rem, 1vw, 0.95rem); font-weight: 400; }
-    .nd small { font-family: var(--sans); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 1px; }
-    .nd.na { top: 0;   left: 8%; background: var(--cream); transform: rotate(-4deg); }
-    .nd.nb { top: 8%;  right: 4%; transform: rotate(3deg); }
-    .nd.nc { bottom: 2%; left: 14%; background: var(--accent); transform: rotate(2deg); }
-    .nd.nc b, .nd.nc small { color: var(--paper); }
-    .nd.nd_ { bottom: 12%; right: 8%; background: var(--ink); transform: rotate(-2deg); }
-    .nd.nd_ b, .nd.nd_ small { color: var(--paper); }
+    .flow-node b { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(0.78rem, 0.95vw, 0.95rem); line-height: 1; }
+    .flow-node small { font-family: var(--sans); font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+    .flow-node.n-n { top: 0; left: 37%; }
+    .flow-node.n-e { top: 37%; right: 0; background: var(--cream); }
+    .flow-node.n-s { bottom: 0; left: 37%; background: var(--accent); color: var(--paper); }
+    .flow-node.n-s small { color: rgba(250,250,247,0.75); }
+    .flow-node.n-w { top: 37%; left: 0; background: var(--ink); color: var(--paper); }
+    .flow-node.n-w small { color: rgba(250,250,247,0.65); }
 
     .cred-rules { display: flex; flex-direction: column; min-width: 0; }
     .cr {
@@ -853,19 +863,30 @@
     <div class="cred-grid">
       <div class="cred-left">
         <p class="copy serif">Classic barter fails because you need someone who wants what you offer, right now. <em>Haus credits break that deadlock.</em></p>
-        <div class="node-dia" aria-hidden="true">
-          <svg viewBox="0 0 300 260" preserveAspectRatio="none">
-            <path d="M80,55 C160,25 230,42 252,65"/>
-            <path d="M252,65 C275,130 248,188 230,204"/>
-            <path d="M230,204 C170,228 110,220 82,204"/>
-            <path d="M82,204 C38,155 44,90 80,55"/>
-            <path d="M80,55 L230,204" stroke-dasharray="2 8"/>
-            <path d="M252,65 L82,204" stroke-dasharray="2 8"/>
+        <div class="flow-dia" aria-hidden="true">
+          <svg viewBox="0 0 400 400">
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#0A0A0A"/>
+              </marker>
+            </defs>
+            <path class="arc" d="M 250,58 Q 342,58 342,150" marker-end="url(#arr)"/>
+            <path class="arc" d="M 342,250 Q 342,342 250,342" marker-end="url(#arr)"/>
+            <path class="arc" d="M 150,342 Q 58,342 58,250" marker-end="url(#arr)"/>
+            <path class="arc" d="M 58,150 Q 58,58 150,58" marker-end="url(#arr)"/>
+            <text class="arc-lbl" x="330" y="108" text-anchor="end">piano lesson</text>
+            <text class="arc-credit" x="330" y="125" text-anchor="end">+1 credit →</text>
+            <text class="arc-lbl" x="330" y="300" text-anchor="end">design work</text>
+            <text class="arc-credit" x="330" y="317" text-anchor="end">+1 credit →</text>
+            <text class="arc-lbl" x="70" y="300" text-anchor="start">photo shoot</text>
+            <text class="arc-credit" x="70" y="317" text-anchor="start">+1 credit →</text>
+            <text class="arc-lbl" x="70" y="108" text-anchor="start">film edit</text>
+            <text class="arc-credit" x="70" y="125" text-anchor="start">+1 credit →</text>
           </svg>
-          <div class="nd na"><b>Priya</b><small>Piano</small></div>
-          <div class="nd nb"><b>Marcus</b><small>Design</small></div>
-          <div class="nd nc"><b>Jia Li</b><small>Photo</small></div>
-          <div class="nd nd_"><b>Rafi</b><small>Film</small></div>
+          <div class="flow-node n-n"><b>Priya</b><small>Piano</small></div>
+          <div class="flow-node n-e"><b>Marcus</b><small>Design</small></div>
+          <div class="flow-node n-s"><b>Jia Li</b><small>Photo</small></div>
+          <div class="flow-node n-w"><b>Rafi</b><small>Film</small></div>
         </div>
       </div>
       <div class="cred-rules">
